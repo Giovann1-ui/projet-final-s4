@@ -11,15 +11,16 @@ class InitialSeeder extends Seeder
         // 1. Insertion des opérateurs et de leurs préfixes
         if ($this->db->table('operateur')->countAllResults() === 0) {
             $this->db->table('operateur')->insertBatch([
-                ['id' => 1, 'libelle' => 'Operateur 033', 'isUs' => false, 'commission' => 0.00],
-                ['id' => 2, 'libelle' => 'Operateur 037', 'isUs' => false, 'commission' => 0.00],
+                ['id' => 1, 'libelle' => 'YAS', 'isUs' => true, 'commission' => 0.00],
+                ['id' => 2, 'libelle' => 'Airtel', 'isUs' => false, 'commission' => 10.00],
             ]);
         }
 
         if ($this->db->table('prefixe_operateur')->countAllResults() === 0) {
             $this->db->table('prefixe_operateur')->insertBatch([
-                ['code' => '033', 'operateur_id' => 1],
-                ['code' => '037', 'operateur_id' => 2]
+                ['code' => '034', 'operateur_id' => 1],
+                ['code' => '038', 'operateur_id' => 1],
+                ['code' => '033', 'operateur_id' => 2],
             ]);
         }
 
@@ -35,8 +36,8 @@ class InitialSeeder extends Seeder
         // 3. Insertion des clients de test (inscriptions fictives)
         if ($this->db->table('client')->countAllResults() === 0) {
             $this->db->table('client')->insertBatch([
-                ['id' => 1, 'num_tel' => '0331234567', 'date_inscription' => date('Y-m-d H:i:s')],
-                ['id' => 2, 'num_tel' => '0379876543', 'date_inscription' => date('Y-m-d H:i:s')],
+                ['id' => 1, 'num_tel' => '0341234567', 'date_inscription' => date('Y-m-d H:i:s')],
+                ['id' => 2, 'num_tel' => '0349876543', 'date_inscription' => date('Y-m-d H:i:s')],
                 ['id' => 3, 'num_tel' => '0337654321', 'date_inscription' => date('Y-m-d H:i:s')],
                 ['id' => 4, 'num_tel' => '0371234567', 'date_inscription' => date('Y-m-d H:i:s')],
             ]);

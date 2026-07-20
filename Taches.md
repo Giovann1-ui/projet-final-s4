@@ -44,9 +44,17 @@
             - [x] ajouter colonne frais_retrait, commission
 - [ ] operateur (Giovanni et Harena)
     - [x] Configuration des préfixes valable pour les autres opérateurs (ex: 032 et 031, …)
+        - [x] modification de base deja faite
     - [x] Configuration % en plus de commissions pour les transferts vers les autres opérateurs
+        - [x] modification de base deja faite
     - [ ] page situationGain
         - [ ] separer operateur et autres operateurs
+            - [ ] page
+                - [ ] ajouter montant total des gains pour les retraits et transferts pour chaque operateur
+                - [ ] liste des operations RETRAIT et TRANSFERT pour chaque operateur
+            - [x] route
+            - [ ] controller
+            - [x] modele
     - [ ] page de situation a envoyer a chaque operateur
 
 - [ ] client (Harena)
