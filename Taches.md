@@ -35,5 +35,19 @@
 
 # V2
 
+- [x] base (Giovanni et Harena)
+    - [x] ajout
+        - [x] table des operateurs(id, nom, isUs, commission)
+    - [x] modification
+        - [x] table prefixe_operateur
+            - [x] ajouter un foreign key de operateur_id
+            - [x] ajouter colonne frais_retrait, commission
+- [ ] operateur (Giovanni et Harena)
+    - [x] Configuration des préfixes valable pour les autres opérateurs (ex: 032 et 031, …)
+    - [x] Configuration % en plus de commissions pour les transferts vers les autres opérateurs
+    - [ ] page situationGain
+        - [ ] separer operateur et autres operateurs
+    - [ ] page de situation a envoyer a chaque operateur
+
 - [ ] client (Harena)
     - [ ]
