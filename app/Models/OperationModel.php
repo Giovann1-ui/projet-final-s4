@@ -34,6 +34,39 @@ class OperationModel extends Model
         ];
     }
 
+    public function getSoldeTotal(int $clientId): float
+    {
+        return $this->getSolde($clientId)['solde'];
+    }
+
+    /**
+     * Solde du client ventilé par type d'opération (DEPOT, RETRAIT, TRANSFERT, ...),
+     * utilisé par la vue opérateur "détail client".
+     */
+    public function getSoldeParTypeOperation(int $clientId): array
+    {
+        $builder = $this->db->table('type_operation to');
+        $builder->select("
+                to.id,
+                to.libelle,
+                COALESCE(SUM(CASE WHEN o.client_dest = " . (int) $clientId . " THEN o.montant_entrant ELSE 0 END), 0) AS entrant,
+                COALESCE(SUM(CASE WHEN o.client_source = " . (int) $clientId . " THEN o.montant_sortant ELSE 0 END), 0) AS sortant
+            ")
+            ->join('operation o', "o.type_operation = to.id AND (o.client_dest = {$clientId} OR o.client_source = {$clientId})", 'left')
+            ->groupBy('to.id, to.libelle')
+            ->orderBy('to.id', 'ASC');
+
+        $rows = $builder->get()->getResultArray();
+
+        foreach ($rows as &$row) {
+            $row['entrant'] = (float) $row['entrant'];
+            $row['sortant'] = (float) $row['sortant'];
+            $row['solde']   = $row['entrant'] - $row['sortant'];
+        }
+
+        return $rows;
+    }
+
     public function getHistorique(
         int $clientId,
         ?int $typeOperationId = null,
@@ -108,7 +141,7 @@ class OperationModel extends Model
         $clients = $clientModel->findAll();
 
         foreach ($clients as &$client) {
-            $client['solde'] = $this->getSolde($client['id']);
+            $client['solde'] = $this->getSoldeTotal($client['id']);
         }
 
         return $clients;

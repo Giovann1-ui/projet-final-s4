@@ -8,26 +8,39 @@ class InitialSeeder extends Seeder
 {
     public function run()
     {
-        // 1. Insertion des préfixes
-        $this->db->table('prefixe_operateur')->insertBatch([
-            ['code' => '033'],
-            ['code' => '037']
-        ]);
+        // 1. Insertion des opérateurs et de leurs préfixes
+        if ($this->db->table('operateur')->countAllResults() === 0) {
+            $this->db->table('operateur')->insertBatch([
+                ['id' => 1, 'libelle' => 'Operateur 033', 'isUs' => false, 'commission' => 0.00],
+                ['id' => 2, 'libelle' => 'Operateur 037', 'isUs' => false, 'commission' => 0.00],
+            ]);
+        }
+
+        if ($this->db->table('prefixe_operateur')->countAllResults() === 0) {
+            $this->db->table('prefixe_operateur')->insertBatch([
+                ['code' => '033', 'operateur_id' => 1],
+                ['code' => '037', 'operateur_id' => 2]
+            ]);
+        }
 
         // 2. Insertion des types d'opérations
-        $this->db->table('type_operation')->insertBatch([
-            ['id' => 1, 'libelle' => 'DEPOT'],
-            ['id' => 2, 'libelle' => 'RETRAIT'],
-            ['id' => 3, 'libelle' => 'TRANSFERT']
-        ]);
+        if ($this->db->table('type_operation')->countAllResults() === 0) {
+            $this->db->table('type_operation')->insertBatch([
+                ['id' => 1, 'libelle' => 'DEPOT'],
+                ['id' => 2, 'libelle' => 'RETRAIT'],
+                ['id' => 3, 'libelle' => 'TRANSFERT']
+            ]);
+        }
 
         // 3. Insertion des clients de test (inscriptions fictives)
-        $this->db->table('client')->insertBatch([
-            ['id' => 1, 'num_tel' => '0331234567', 'date_inscription' => date('Y-m-d H:i:s')],
-            ['id' => 2, 'num_tel' => '0379876543', 'date_inscription' => date('Y-m-d H:i:s')],
-            ['id' => 3, 'num_tel' => '0337654321', 'date_inscription' => date('Y-m-d H:i:s')],
-            ['id' => 4, 'num_tel' => '0371234567', 'date_inscription' => date('Y-m-d H:i:s')],
-        ]);
+        if ($this->db->table('client')->countAllResults() === 0) {
+            $this->db->table('client')->insertBatch([
+                ['id' => 1, 'num_tel' => '0331234567', 'date_inscription' => date('Y-m-d H:i:s')],
+                ['id' => 2, 'num_tel' => '0379876543', 'date_inscription' => date('Y-m-d H:i:s')],
+                ['id' => 3, 'num_tel' => '0337654321', 'date_inscription' => date('Y-m-d H:i:s')],
+                ['id' => 4, 'num_tel' => '0371234567', 'date_inscription' => date('Y-m-d H:i:s')],
+            ]);
+        }
 
         // 4. Barème des frais basé sur ton image (ID 2 = RETRAIT, ID 3 = TRANSFERT)
         $baremes = [
@@ -48,7 +61,9 @@ class InitialSeeder extends Seeder
             ['type_operation' => 3, 'montant_min' => 25001,  'montant_max' => 50000,   'frais' => 400],
         ];
 
-        $this->db->table('bareme_frais')->insertBatch($baremes);
+        if ($this->db->table('bareme_frais')->countAllResults() === 0) {
+            $this->db->table('bareme_frais')->insertBatch($baremes);
+        }
 
         // 5. Simulation d'un dépôt initial pour le client 1 (Correction table 'operation' et colonnes montants)
 
@@ -94,6 +109,13 @@ class InitialSeeder extends Seeder
                 'date'            => date('Y-m-d H:i:s')
             ]
         ];
-        $this->db->table('operation')->insertBatch($operation);
+        if ($this->db->table('operation')->countAllResults() === 0) {
+            $this->db->table('operation')->insertBatch(array_map(static function (array $row): array {
+                $row['frais_retrait'] = $row['type_operation'] === 2 ? 1000 : 0;
+                $row['commission'] = 0.00;
+
+                return $row;
+            }, $operation));
+        }
     }
 }

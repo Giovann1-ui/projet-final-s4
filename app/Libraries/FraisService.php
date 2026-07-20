@@ -34,10 +34,6 @@ class FraisService
         $this->db                 = Database::connect();
     }
 
-    /**
-     * Frais applicables pour un montant et un type d'opération.
-     * Le DEPOT est toujours gratuit (aucune tranche définie pour ce type).
-     */
     public function calculerFrais(string $typeLibelle, float $montant): float
     {
         if ($typeLibelle === self::DEPOT) {

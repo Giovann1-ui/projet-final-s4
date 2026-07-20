@@ -27,8 +27,13 @@
             
         
 - [ ] client (Harena)
-    - [ ]Login automatique par numero sans inscription prealable(AuthController, AuthFilter, CompteModel::getOrCreate, validation du préfixe)
-    - [ ]Modeles CompteModel et OperationModel (crédit/débit atomiques, historique)
-    - [ ]Librairie FraisService : calcul des frais par tranche, contrôle du solde,execution transactionnelle du depot / retrait / transfert
-    - [ ]Cote client : consultation du solde, depot, retrait, transfert,historiques filtrables (type + période) avec totaux
-    - [ ]Protection CSRF sur tous les formulaires + esc() sur toutes les sorties
+    - [X]Login automatique par numero sans inscription prealable(AuthController, AuthFilter, CompteModel::getOrCreate, validation du préfixe)
+    - [X]Modeles CompteModel et OperationModel (crédit/débit atomiques, historique)
+    - [X]Librairie FraisService : calcul des frais par tranche, contrôle du solde,execution transactionnelle du depot / retrait / transfert
+    - [X]Cote client : consultation du solde, depot, retrait, transfert,historiques filtrables (type + période) avec totaux
+    - [x]Protection CSRF sur tous les formulaires + esc() sur toutes les sorties
+
+# V2
+
+- [ ] client (Harena)
+    - [ ]

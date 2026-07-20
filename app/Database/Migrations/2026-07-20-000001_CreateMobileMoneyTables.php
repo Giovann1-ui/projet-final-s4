@@ -8,12 +8,24 @@ class CreateMobileMoneyTables extends Migration
 {
     public function up()
     {
+
+        $this->forge->addField([
+            'id'    => ['type' => 'INTEGER', 'constraint' => 11, 'auto_increment' => true],
+            'libelle'  => ['type' => 'VARCHAR', 'constraint' => 50, 'unique' => true],
+            'isUs' => ['type' => 'BOOLEAN', 'default' => false],
+            'commission' => ['type' => 'DECIMAL', 'constraint' => '5,2', 'default' => 0.00],
+        ]);
+        $this->forge->addKey('id', true);
+        $this->forge->createTable('operateur');
+
         // 1. Table prefixe_operateur
         $this->forge->addField([
             'id'    => ['type' => 'INTEGER', 'constraint' => 11, 'auto_increment' => true],
             'code'  => ['type' => 'VARCHAR', 'constraint' => 5, 'unique' => true],
+            'operateur_id' => ['type' => 'INTEGER', 'constraint' => 11],
         ]);
         $this->forge->addKey('id', true);
+        $this->forge->addForeignKey('operateur_id', 'operateur', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('prefixe_operateur');
 
         // 2. Table client
@@ -54,6 +66,8 @@ class CreateMobileMoneyTables extends Migration
             'client_dest'    => ['type' => 'INTEGER', 'constraint' => 11, 'null' => true],
             'montant_brut'   => ['type' => 'DECIMAL', 'constraint' => '15,2'],
             'frais'          => ['type' => 'DECIMAL', 'constraint' => '15,2'],
+            'frais_retrait'    => ['type' => 'DECIMAL', 'constraint' => '15,2'],
+            'commission'       => ['type' => 'DECIMAL', 'constraint' => '15,2', 'default' => 0.00],
             'montant_entrant' => ['type' => 'DECIMAL', 'constraint' => '15,2'],
             'montant_sortant' => ['type' => 'DECIMAL', 'constraint' => '15,2'],
             'date'           => ['type' => 'DATETIME', 'null' => true],
@@ -63,8 +77,6 @@ class CreateMobileMoneyTables extends Migration
         $this->forge->addForeignKey('client_source', 'client', 'id', 'SET NULL', 'CASCADE');
         $this->forge->addForeignKey('client_dest', 'client', 'id', 'SET NULL', 'CASCADE');
         $this->forge->createTable('operation');
-
-        
     }
 
     public function down()
