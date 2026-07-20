@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\ClientModel;
+use App\Models\OperateurModel;
 use App\Models\PrefixeOperateurModel;
 use App\Models\OperationModel;
 
@@ -38,29 +39,50 @@ class OperateurController extends BaseController
 
     public function situationGains()
     {
-        // Enlève le commentaire si la gestion des rôles est active :
         // if ($redirect = $this->requireRole('operateur')) return $redirect;
 
+        $operateurModel = new OperateurModel();
         $operationModel = new OperationModel();
         $prefixeModel = new PrefixeOperateurModel();
 
-        // Récupération de tous les préfixes configurés en BDD (ex: ['034', '038', '033'])
+        // 1. Récupérer les autres opérateurs (isUs = 0)
+        $autresOperateurs = $operateurModel
+            ->where('isUs', 0)
+            ->orderBy('libelle', 'ASC')
+            ->findAll();
+
+        // 2. Récupérer TOUS les préfixes (pour vos propres gains Retraits / Transferts)
         $prefixeOperateur = $prefixeModel->getAllPrefixeOperateurs();
         $prefixeCodes = array_column($prefixeOperateur, 'code');
 
-        // Calcul des totaux
-        $totalGainsRetrait   = $operationModel->getGainsByTypeOperationAndPrefixe(2, $prefixeCodes); // 2 = Retrait
-        $totalGainsTransfert = $operationModel->getGainsByTypeOperationAndPrefixe(3, $prefixeCodes); // 3 = Transfert
+        // 3. Récupérer les préfixes uniquement des AUTRES opérateurs pour la table du milieu
+        $autresPrefixeCodes = [];
+        if (!empty($autresOperateurs)) {
+            $autresOperateursIds = array_column($autresOperateurs, 'id');
+            $prefixeAutres = $prefixeModel->whereIn('operateur_id', $autresOperateursIds)->findAll();
+            $autresPrefixeCodes = array_column($prefixeAutres, 'code');
+        }
 
-        // Récupération des listes
+        // Calcul des totaux et listes (Notre réseau "isUs")
+        $totalGainsRetrait   = $operationModel->getGainsByTypeOperationAndPrefixe(2, $prefixeCodes);
+        $totalGainsTransfert = $operationModel->getGainsByTypeOperationAndPrefixe(3, $prefixeCodes);
+        
         $listeOperationsRetrait   = $operationModel->getOperationByTypeOperationAndPrefixe(2, $prefixeCodes);
         $listeOperationsTransfert = $operationModel->getOperationByTypeOperationAndPrefixe(3, $prefixeCodes);
+
+        // 4. Récupération de la liste manquante pour la vue !
+        $listeOperationsAutres = [];
+        if (!empty($autresPrefixeCodes)) {
+            $listeOperationsAutres = $operationModel->getOperationsByPrefixe($autresPrefixeCodes);
+        }
 
         return view('operateur/situationGain', $this->viewData([
             'totalGainsRetrait'        => $totalGainsRetrait,
             'totalGainsTransfert'      => $totalGainsTransfert,
             'listeOperationsRetrait'   => $listeOperationsRetrait,
             'listeOperationsTransfert' => $listeOperationsTransfert,
+            'autresOperateurs'         => $autresOperateurs,
+            'listeOperationsAutres'    => $listeOperationsAutres, // <-- Variable ajoutée ici
         ]));
     }
 

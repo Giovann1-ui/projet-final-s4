@@ -136,13 +136,16 @@ class OperationModel extends Model
             return 0.0;
         }
 
+        // RETRAIT (2) -> jointure sur client_source, sinon sur client_dest
+        $joinColumn = ($typeOperationId === 2) ? 'operation.client_source' : 'operation.client_dest';
+
         $builder = $this->selectSum('operation.frais', 'total_frais')
             ->where('operation.type_operation', $typeOperationId)
-            ->join('client', 'client.id = operation.client_dest');
+            ->join('client', "client.id = {$joinColumn}");
 
         $builder->groupStart();
         foreach ($prefixes as $prefixe) {
-            $builder->orLike('client.num_tel', $prefixe, 'after'); // Génère : client.num_tel LIKE '034%'
+            $builder->orLike('client.num_tel', $prefixe, 'after');
         }
         $builder->groupEnd();
 
@@ -159,13 +162,45 @@ class OperationModel extends Model
             return [];
         }
 
-        $builder = $this->where('operation.type_operation', $typeOperationId)
-            ->join('client', 'client.id = operation.client_dest');
+        $joinColumn = ($typeOperationId === 2) ? 'operation.client_source' : 'operation.client_dest';
+
+        // Ajout d'un select pour récupérer aussi les numéros des clients sources et destinations
+        $builder = $this->select('operation.*, cs.num_tel AS num_tel_source, cd.num_tel AS num_tel_dest')
+            ->where('operation.type_operation', $typeOperationId)
+            ->join('client cs', 'cs.id = operation.client_source', 'left')
+            ->join('client cd', 'cd.id = operation.client_dest', 'left')
+            // La jointure de filtrage du préfixe se base sur la règle métier (source ou dest)
+            ->join('client', "client.id = {$joinColumn}");
 
         $builder->groupStart();
         foreach ($prefixes as $prefixe) {
             $builder->orLike('client.num_tel', $prefixe, 'after');
-            
+        }
+        $builder->groupEnd();
+
+        return $builder->orderBy('operation.date', 'DESC')->findAll();
+    }
+
+    public function getOperationsByPrefixe(array|string $prefixeOperateur): array
+    {
+        $prefixes = $this->cleanPrefixes($prefixeOperateur);
+
+        if (empty($prefixes)) {
+            return [];
+        }
+
+        $builder = $this->select(
+            'operation.*, type_operation.libelle AS type_libelle, ' .
+                'cs.num_tel AS num_tel_source, cd.num_tel AS num_tel_dest'
+        )
+            ->join('type_operation', 'type_operation.id = operation.type_operation')
+            ->join('client cs', 'cs.id = operation.client_source', 'left')
+            ->join('client cd', 'cd.id = operation.client_dest', 'left');
+
+        $builder->groupStart();
+        foreach ($prefixes as $prefixe) {
+            $builder->orLike('cs.num_tel', $prefixe, 'after');
+            $builder->orLike('cd.num_tel', $prefixe, 'after');
         }
         $builder->groupEnd();
 
@@ -175,7 +210,7 @@ class OperationModel extends Model
     private function cleanPrefixes(array|string $prefixeOperateur): array
     {
         $array = is_array($prefixeOperateur) ? $prefixeOperateur : [$prefixeOperateur];
-
+        
         return array_values(array_filter(array_map(
             static fn($code) => substr(trim((string) $code), 0, 3),
             $array
