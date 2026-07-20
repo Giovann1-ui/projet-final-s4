@@ -84,19 +84,52 @@ class Client extends Controller
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $numTelDest = $this->request->getPost('num_tel_dest');
-        $montant    = (float) $this->request->getPost('montant');
-        $clientId   = session('client')['id'];
+        $numTelDest           = $this->request->getPost('num_tel_dest');
+        $montant              = (float) $this->request->getPost('montant');
+        $inclureFraisRetrait  = (bool) $this->request->getPost('inclure_frais_retrait');
+        $clientId             = session('client')['id'];
 
         try {
-            (new FraisService())->transferer($clientId, $numTelDest, $montant);
+            (new FraisService())->transferer($clientId, $numTelDest, $montant, $inclureFraisRetrait);
         } catch (RuntimeException $e) {
             return redirect()->to('/client/transfert')->withInput()->with('error', $e->getMessage());
         }
 
         return redirect()->to('/client')->with(
             'success',
-            'Transfert de ' . number_format($montant, 0, ',', ' ') . " Ar vers {$numTelDest} effectué."
+            'Transfert de ' . number_format($montant, 0, ',', ' ') . " Ar vers {$numTelDest} effectue."
+        );
+    }
+
+    public function envoiMultiple()
+    {
+        return view('client/envoi_multiple');
+    }
+
+    public function envoiMultipleStore()
+    {
+        if (!$this->validate([
+            'num_tels_dest' => 'required',
+            'montant'       => 'required|numeric|greater_than[0]',
+        ])) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $numTelsBrut         = (string) $this->request->getPost('num_tels_dest');
+        $numTels             = preg_split('/[\r\n,;]+/', $numTelsBrut) ?: [];
+        $montant             = (float) $this->request->getPost('montant');
+        $inclureFraisRetrait = (bool) $this->request->getPost('inclure_frais_retrait');
+        $clientId            = session('client')['id'];
+
+        try {
+            (new FraisService())->transfererMultiple($clientId, $numTels, $montant, $inclureFraisRetrait);
+        } catch (RuntimeException $e) {
+            return redirect()->to('/client/envoi-multiple')->withInput()->with('error', $e->getMessage());
+        }
+
+        return redirect()->to('/client')->with(
+            'success',
+            'Envoi multiple de ' . number_format($montant, 0, ',', ' ') . ' Ar effectue.'
         );
     }
 

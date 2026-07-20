@@ -10,7 +10,8 @@ class OperationModel extends Model
     protected $primaryKey    = 'id';
     protected $allowedFields = [
         'type_operation', 'client_source', 'client_dest',
-        'montant_brut', 'frais', 'montant_entrant', 'montant_sortant', 'date',
+        'montant_brut', 'frais', 'frais_retrait', 'commission',
+        'montant_entrant', 'montant_sortant', 'date',
     ];
     protected $useTimestamps = false;
 

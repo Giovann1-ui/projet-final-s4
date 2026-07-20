@@ -36,4 +36,9 @@
 # V2
 
 - [ ] client (Harena)
-    - [ ]
+    - [ ] Option inclure frais de retrait lors de l’envoi
+        - [X] modification table ajout colonnefrais_retrait
+        - [ ] modification vue checkbox
+        - [ ] controlleur ajout frais et exclusion autres operateurs 
+            - il n’y a pas de frais de retrait pour les autres opérateurs
+    - [ ]Envoi multiple vers plusieurs numéros ( divisé le montant pour chaque numéro)même opérateur uniquement

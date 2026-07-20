@@ -64,7 +64,7 @@ class OperateurController extends BaseController {
         $operationModel = new OperationModel();
         $client = $clientModel->find((int) $clientId);
         $soldeParTypeOperation = $operationModel->getSoldeParTypeOperation($clientId);
-        $soldeTotal = $operationModel->getSoldeTotal($clientId);
+        $soldeTotal = $operationModel->getSolde($clientId);
         $transactions = $operationModel->getTransactionsByClient($clientId);
 
         if (!$client) {
