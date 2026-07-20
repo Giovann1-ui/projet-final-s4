@@ -46,7 +46,7 @@ class CreateMobileMoneyTables extends Migration
         $this->forge->addForeignKey('type_operation', 'type_operation', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('bareme_frais');
 
-        // 5. Table transaction
+        // 5. Table operation
         $this->forge->addField([
             'id'             => ['type' => 'INTEGER', 'constraint' => 11, 'auto_increment' => true],
             'type_operation' => ['type' => 'INTEGER', 'constraint' => 11],
@@ -54,19 +54,22 @@ class CreateMobileMoneyTables extends Migration
             'client_dest'    => ['type' => 'INTEGER', 'constraint' => 11, 'null' => true],
             'montant_brut'   => ['type' => 'DECIMAL', 'constraint' => '15,2'],
             'frais'          => ['type' => 'DECIMAL', 'constraint' => '15,2'],
-            'montant_net'    => ['type' => 'DECIMAL', 'constraint' => '15,2'],
+            'montant_entrant' => ['type' => 'DECIMAL', 'constraint' => '15,2'],
+            'montant_sortant' => ['type' => 'DECIMAL', 'constraint' => '15,2'],
             'date'           => ['type' => 'DATETIME', 'null' => true],
         ]);
         $this->forge->addKey('id', true);
         $this->forge->addForeignKey('type_operation', 'type_operation', 'id', 'CASCADE', 'CASCADE');
         $this->forge->addForeignKey('client_source', 'client', 'id', 'SET NULL', 'CASCADE');
         $this->forge->addForeignKey('client_dest', 'client', 'id', 'SET NULL', 'CASCADE');
-        $this->forge->createTable('transaction');
+        $this->forge->createTable('operation');
+
+        
     }
 
     public function down()
     {
-        $this->forge->dropTable('transaction', true);
+        $this->forge->dropTable('operation', true);
         $this->forge->dropTable('bareme_frais', true);
         $this->forge->dropTable('type_operation', true);
         $this->forge->dropTable('client', true);

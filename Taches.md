@@ -6,10 +6,29 @@
     - [x] seed de la base de donnees
     - [x] config de .env
 - [ ] operateur (Giovanni)
-    - CRUD des prefixes valables des operateurs
-    - [ ] page de situation des gains via les differents frais (retrait et transfert)
+    - [x] insertion des prefixes valables des operateurs
+        - [x] page de creation d'un prefixe
+            - [x] controller
+            - [x] route
+            - [x] vue
+            - [x] modele
+    - [x] page de situation des gains via les differents frais (retrait et transfert)
         - [?] c'est une page qui affiche le total de gains pour les retraits et transferts
-    - [ ] pages des situation des comptes clients
+        - [x] page
+        - [x] controller
+        - [x] route
+        - [x] modele
+    - [x] pages des situation des comptes clients
         - [?] on y montre le solde, les transactions
+        - [x] page
+            - [x] liste des clients
+            - [ ] si on clique sur un client, on va vers une page de detail du client
+                - [x] on y montre le solde du client, les transactions du client
+            
         
 - [ ] client (Harena)
+    - [ ]Login automatique par numero sans inscription prealable(AuthController, AuthFilter, CompteModel::getOrCreate, validation du préfixe)
+    - [ ]Modeles CompteModel et OperationModel (crédit/débit atomiques, historique)
+    - [ ]Librairie FraisService : calcul des frais par tranche, contrôle du solde,execution transactionnelle du depot / retrait / transfert
+    - [ ]Cote client : consultation du solde, depot, retrait, transfert,historiques filtrables (type + période) avec totaux
+    - [ ]Protection CSRF sur tous les formulaires + esc() sur toutes les sorties
