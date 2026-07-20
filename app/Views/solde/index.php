@@ -50,26 +50,26 @@
     <?php if ($client): ?>
         <div class="total-box mb-4 text-center">
             <div>Solde total — <?= esc($client['num_tel']) ?></div>
-            <div class="montant"><?= number_format($soldeTotal, 0, ',', ' ') ?> Ar</div>
+            <div class="montant"><?= number_format($solde['solde'], 0, ',', ' ') ?> Ar</div>
         </div>
 
-        <h6 class="mb-3 text-muted">Détail par type d'opération</h6>
         <div class="row g-3">
-            <?php foreach ($details as $ligne): ?>
-                <div class="col-12 col-md-4">
-                    <div class="op-box">
-                        <div class="libelle"><?= esc($ligne['libelle']) ?></div>
-                        <div class="montant <?= $ligne['solde'] < 0 ? 'text-danger' : 'text-success' ?>">
-                            <?= number_format($ligne['solde'], 0, ',', ' ') ?> Ar
-                        </div>
-                        <div class="small text-muted mt-2">
-                            <i class="bi bi-arrow-down-circle text-success"></i> Entrant : <?= number_format($ligne['entrant'], 0, ',', ' ') ?> Ar
-                            <br>
-                            <i class="bi bi-arrow-up-circle text-danger"></i> Sortant : <?= number_format($ligne['sortant'], 0, ',', ' ') ?> Ar
-                        </div>
+            <div class="col-12 col-md-6">
+                <div class="op-box">
+                    <div class="libelle">Reçu (client_dest)</div>
+                    <div class="montant text-success">
+                        <?= number_format($solde['entrant'], 0, ',', ' ') ?> Ar
                     </div>
                 </div>
-            <?php endforeach; ?>
+            </div>
+            <div class="col-12 col-md-6">
+                <div class="op-box">
+                    <div class="libelle">Envoyé (client_source)</div>
+                    <div class="montant text-danger">
+                        <?= number_format($solde['sortant'], 0, ',', ' ') ?> Ar
+                    </div>
+                </div>
+            </div>
         </div>
     <?php elseif (!$erreur && $num_tel === ''): ?>
         <p class="text-muted">Saisissez un numéro de téléphone pour afficher le solde correspondant.</p>

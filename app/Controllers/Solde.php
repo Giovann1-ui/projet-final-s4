@@ -13,11 +13,10 @@ class Solde extends Controller
         $numTel = trim((string) $this->request->getGet('num_tel'));
 
         $data = [
-            'num_tel'  => $numTel,
-            'client'   => null,
-            'details'  => [],
-            'soldeTotal' => null,
-            'erreur'   => null,
+            'num_tel' => $numTel,
+            'client'  => null,
+            'solde'   => null,
+            'erreur'  => null,
         ];
 
         if ($numTel !== '') {
@@ -27,10 +26,9 @@ class Solde extends Controller
             if (!$client) {
                 $data['erreur'] = "Aucun client trouvé pour le numéro {$numTel}.";
             } else {
-                $operationModel   = new OperationModel();
-                $data['client']   = $client;
-                $data['details']  = $operationModel->getSoldeParTypeOperation((int) $client['id']);
-                $data['soldeTotal'] = $operationModel->getSoldeTotal((int) $client['id']);
+                $operationModel = new OperationModel();
+                $data['client']  = $client;
+                $data['solde']   = $operationModel->getSolde((int) $client['id']);
             }
         }
 

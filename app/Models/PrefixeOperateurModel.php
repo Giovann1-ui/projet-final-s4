@@ -24,4 +24,9 @@ class PrefixeOperateurModel extends Model
     {
         return $this->insert($data);
     }
+
+    public function isPrefixeValide(string $prefixe): bool
+    {
+        return $this->where('code', $prefixe)->first() !== null;
+    }
 }

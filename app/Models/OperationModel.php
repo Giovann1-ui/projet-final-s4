@@ -14,31 +14,7 @@ class OperationModel extends Model
     ];
     protected $useTimestamps = false;
 
-    public function getSoldeParTypeOperation(int $clientId): array
-    {
-        $builder = $this->db->table('type_operation to');
-        $builder->select("
-                to.id,
-                to.libelle,
-                COALESCE(SUM(CASE WHEN o.client_dest = " . (int) $clientId . " THEN o.montant_entrant ELSE 0 END), 0) AS entrant,
-                COALESCE(SUM(CASE WHEN o.client_source = " . (int) $clientId . " THEN o.montant_sortant ELSE 0 END), 0) AS sortant
-            ")
-            ->join('operation o', "o.type_operation = to.id AND (o.client_dest = {$clientId} OR o.client_source = {$clientId})", 'left')
-            ->groupBy('to.id, to.libelle')
-            ->orderBy('to.id', 'ASC');
-
-        $rows = $builder->get()->getResultArray();
-
-        foreach ($rows as &$row) {
-            $row['entrant'] = (float) $row['entrant'];
-            $row['sortant'] = (float) $row['sortant'];
-            $row['solde']   = $row['entrant'] - $row['sortant'];
-        }
-
-        return $rows;
-    }
-
-    public function getSoldeTotal(int $clientId): float
+    public function getSolde(int $clientId): array
     {
         $entrant = $this->selectSum('montant_entrant')
             ->where('client_dest', $clientId)
@@ -48,6 +24,69 @@ class OperationModel extends Model
             ->where('client_source', $clientId)
             ->get()->getRowArray()['montant_sortant'] ?? 0;
 
-        return (float) $entrant - (float) $sortant;
+        $entrant = (float) $entrant;
+        $sortant = (float) $sortant;
+
+        return [
+            'entrant' => $entrant,
+            'sortant' => $sortant,
+            'solde'   => $entrant - $sortant,
+        ];
+    }
+
+    /**
+     * Historique des opérations d'un client (en tant qu'émetteur ou destinataire),
+     * filtrable par type d'opération et par période, avec les totaux correspondants.
+     */
+    public function getHistorique(
+        int $clientId,
+        ?int $typeOperationId = null,
+        ?string $dateDebut = null,
+        ?string $dateFin = null
+    ): array {
+        $builder = $this->select(
+                'operation.*, type_operation.libelle AS type_libelle, ' .
+                'cs.num_tel AS num_tel_source, cd.num_tel AS num_tel_dest'
+            )
+            ->join('type_operation', 'type_operation.id = operation.type_operation')
+            ->join('client cs', 'cs.id = operation.client_source', 'left')
+            ->join('client cd', 'cd.id = operation.client_dest', 'left')
+            ->groupStart()
+                ->where('operation.client_source', $clientId)
+                ->orWhere('operation.client_dest', $clientId)
+            ->groupEnd();
+
+        if ($typeOperationId !== null) {
+            $builder->where('operation.type_operation', $typeOperationId);
+        }
+        if ($dateDebut !== null && $dateDebut !== '') {
+            $builder->where('operation.date >=', $dateDebut . ' 00:00:00');
+        }
+        if ($dateFin !== null && $dateFin !== '') {
+            $builder->where('operation.date <=', $dateFin . ' 23:59:59');
+        }
+
+        $operations = $builder->orderBy('operation.date', 'DESC')->findAll();
+
+        $entrant = $sortant = $frais = 0.0;
+        foreach ($operations as $op) {
+            if ((int) $op['client_dest'] === $clientId) {
+                $entrant += (float) $op['montant_entrant'];
+            }
+            if ((int) $op['client_source'] === $clientId) {
+                $sortant += (float) $op['montant_sortant'];
+                $frais   += (float) $op['frais'];
+            }
+        }
+
+        return [
+            'operations' => $operations,
+            'totaux'     => [
+                'entrant' => $entrant,
+                'sortant' => $sortant,
+                'frais'   => $frais,
+                'nombre'  => count($operations),
+            ],
+        ];
     }
 }

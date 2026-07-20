@@ -26,4 +26,20 @@ class ClientModel extends Model
     {
         return $this->where('num_tel', $numTel)->first();
     }
+
+    public function getOrCreate(string $numTel): array
+    {
+        $client = $this->findByNumTel($numTel);
+
+        if ($client !== null) {
+            return $client;
+        }
+
+        $id = $this->insert([
+            'num_tel'          => $numTel,
+            'date_inscription' => date('Y-m-d H:i:s'),
+        ]);
+
+        return $this->find($id);
+    }
 }
