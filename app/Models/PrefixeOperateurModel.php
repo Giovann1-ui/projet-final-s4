@@ -8,7 +8,7 @@ class PrefixeOperateurModel extends Model
 {
     protected $table = 'prefixe_operateur';
     protected $primaryKey = 'id';
-    protected $allowedFields = ['code'];
+    protected $allowedFields = ['code', 'operateur_id'];
 
     public function getAllPrefixeOperateurs()
     {

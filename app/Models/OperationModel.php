@@ -9,9 +9,16 @@ class OperationModel extends Model
     protected $table         = 'operation';
     protected $primaryKey    = 'id';
     protected $allowedFields = [
-        'type_operation', 'client_source', 'client_dest',
-        'montant_brut', 'frais', 'frais_retrait', 'commission',
-        'montant_entrant', 'montant_sortant', 'date',
+        'type_operation',
+        'client_source',
+        'client_dest',
+        'montant_brut',
+        'frais',
+        'frais_retrait',
+        'commission',
+        'montant_entrant',
+        'montant_sortant',
+        'date',
     ];
     protected $useTimestamps = false;
 
@@ -75,15 +82,15 @@ class OperationModel extends Model
         ?string $dateFin = null
     ): array {
         $builder = $this->select(
-                'operation.*, type_operation.libelle AS type_libelle, ' .
+            'operation.*, type_operation.libelle AS type_libelle, ' .
                 'cs.num_tel AS num_tel_source, cd.num_tel AS num_tel_dest'
-            )
+        )
             ->join('type_operation', 'type_operation.id = operation.type_operation')
             ->join('client cs', 'cs.id = operation.client_source', 'left')
             ->join('client cd', 'cd.id = operation.client_dest', 'left')
             ->groupStart()
-                ->where('operation.client_source', $clientId)
-                ->orWhere('operation.client_dest', $clientId)
+            ->where('operation.client_source', $clientId)
+            ->orWhere('operation.client_dest', $clientId)
             ->groupEnd();
 
         if ($typeOperationId !== null) {
@@ -120,20 +127,59 @@ class OperationModel extends Model
         ];
     }
 
-    public function getGainsByTypeOperation(int $typeOperationId): float
-    {
-        $gain = $this->selectSum('frais')
-            ->where('type_operation', $typeOperationId)
-            ->get()->getRowArray()['frais'] ?? 0;
 
-        return (float) $gain;
+    public function getGainsByTypeOperationAndPrefixe(int $typeOperationId, array|string $prefixeOperateur): float
+    {
+        $prefixes = $this->cleanPrefixes($prefixeOperateur);
+
+        if (empty($prefixes)) {
+            return 0.0;
+        }
+
+        $builder = $this->selectSum('operation.frais', 'total_frais')
+            ->where('operation.type_operation', $typeOperationId)
+            ->join('client', 'client.id = operation.client_dest');
+
+        $builder->groupStart();
+        foreach ($prefixes as $prefixe) {
+            $builder->orLike('client.num_tel', $prefixe, 'after'); // Génère : client.num_tel LIKE '034%'
+        }
+        $builder->groupEnd();
+
+        $result = $builder->get()->getRowArray();
+
+        return (float) ($result['total_frais'] ?? 0.0);
     }
 
-    public function getOperationByTypeOperation(int $typeOperationId): array
+    public function getOperationByTypeOperationAndPrefixe(int $typeOperationId, array|string $prefixeOperateur): array
     {
-        return $this->where('type_operation', $typeOperationId)
-            ->orderBy('date', 'DESC')
-            ->findAll();
+        $prefixes = $this->cleanPrefixes($prefixeOperateur);
+
+        if (empty($prefixes)) {
+            return [];
+        }
+
+        $builder = $this->where('operation.type_operation', $typeOperationId)
+            ->join('client', 'client.id = operation.client_dest');
+
+        $builder->groupStart();
+        foreach ($prefixes as $prefixe) {
+            $builder->orLike('client.num_tel', $prefixe, 'after');
+            
+        }
+        $builder->groupEnd();
+
+        return $builder->orderBy('operation.date', 'DESC')->findAll();
+    }
+
+    private function cleanPrefixes(array|string $prefixeOperateur): array
+    {
+        $array = is_array($prefixeOperateur) ? $prefixeOperateur : [$prefixeOperateur];
+
+        return array_values(array_filter(array_map(
+            static fn($code) => substr(trim((string) $code), 0, 3),
+            $array
+        )));
     }
 
     public function getAllClientsWithSolde(): array
@@ -153,8 +199,8 @@ class OperationModel extends Model
         return $this->select('operation.*, type_operation.libelle AS type_libelle')
             ->join('type_operation', 'type_operation.id = operation.type_operation', 'left')
             ->groupStart()
-                ->where('operation.client_source', $clientId)
-                ->orWhere('operation.client_dest', $clientId)
+            ->where('operation.client_source', $clientId)
+            ->orWhere('operation.client_dest', $clientId)
             ->groupEnd()
             ->orderBy('operation.date', 'DESC')
             ->findAll();
