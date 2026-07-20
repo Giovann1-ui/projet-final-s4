@@ -34,10 +34,6 @@ class OperationModel extends Model
         ];
     }
 
-    /**
-     * Historique des opérations d'un client (en tant qu'émetteur ou destinataire),
-     * filtrable par type d'opération et par période, avec les totaux correspondants.
-     */
     public function getHistorique(
         int $clientId,
         ?int $typeOperationId = null,
@@ -112,7 +108,7 @@ class OperationModel extends Model
         $clients = $clientModel->findAll();
 
         foreach ($clients as &$client) {
-            $client['solde'] = $this->getSoldeTotal($client['id']);
+            $client['solde'] = $this->getSolde($client['id']);
         }
 
         return $clients;

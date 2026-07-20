@@ -6,6 +6,8 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
+$routes->get('/', 'ClientAuth::index');
+
 $routes->group('/operateur', static function ($routes) {
     $routes->get('/', 'OperateurController::index');
     $routes->get('creer', 'OperateurController::creerOperateur');

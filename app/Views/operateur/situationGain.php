@@ -1,56 +1,80 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-</head>
-<body>
-    <p>Total Gains Retrait: <?= $totalGainsRetrait ?? 0 ?></p>
-    <p>Total Gains Transfert: <?= $totalGainsTransfert ?? 0 ?></p>
+<?= view('operateur/partials/header', ['activePage' => 'gains']) ?>
 
-    <h2>Liste des Opérations Retrait</h2>
-    <?php if (!empty($listeOperationsRetrait)) { ?>
-        <table>
+<h3 class="mb-4"><i class="bi bi-graph-up"></i> Situation des gains</h3>
+
+<div class="row g-3 mb-4">
+    <div class="col-12 col-md-6">
+        <div class="total-box text-center">
+            <div>Gains sur retraits</div>
+            <div class="montant"><?= number_format((float) ($totalGainsRetrait ?? 0), 0, ',', ' ') ?> Ar</div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="total-box text-center">
+            <div>Gains sur transferts</div>
+            <div class="montant"><?= number_format((float) ($totalGainsTransfert ?? 0), 0, ',', ' ') ?> Ar</div>
+        </div>
+    </div>
+</div>
+
+<h5 class="mb-3">Opérations de retrait</h5>
+<div class="table-responsive mb-4">
+    <table class="table table-striped align-middle">
+        <thead>
             <tr>
                 <th>Id du client</th>
-                <th>Montant brut</th>
-                <th>Frais/Gain</th>
-                <th>Total sortant</th>
+                <th class="text-end">Montant brut</th>
+                <th class="text-end">Frais/Gain</th>
+                <th class="text-end">Total sortant</th>
             </tr>
-            <?php foreach ($listeOperationsRetrait as $operation) { ?>
-            <tr>
-                <td><?= $operation['client_source'] ?? 'Inconnue' ?></td>
-                <td><?= $operation['montant_brut'] ?? 'Inconnu' ?></td>
-                <td><?= $operation['frais'] ?? 'Inconnus' ?></td>
-                <td><?= $operation['montant_sortant'] ?? 'Inconnus' ?></td>
-            </tr>
-            <?php } ?>
-        </table>
-    <?php } ?>
+        </thead>
+        <tbody>
+            <?php if (empty($listeOperationsRetrait)): ?>
+                <tr><td colspan="4" class="text-center text-muted">Aucune opération.</td></tr>
+            <?php else: ?>
+                <?php foreach ($listeOperationsRetrait as $operation): ?>
+                <tr>
+                    <td><?= esc($operation['client_source'] ?? '—') ?></td>
+                    <td class="text-end"><?= number_format((float) ($operation['montant_brut'] ?? 0), 0, ',', ' ') ?> Ar</td>
+                    <td class="text-end"><?= number_format((float) ($operation['frais'] ?? 0), 0, ',', ' ') ?> Ar</td>
+                    <td class="text-end"><?= number_format((float) ($operation['montant_sortant'] ?? 0), 0, ',', ' ') ?> Ar</td>
+                </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
 
-    <h2>Liste des operation de transfert</h2>
-    <?php if (!empty($listeOperationsTransfert)) { ?>
-        <table>
+<h5 class="mb-3">Opérations de transfert</h5>
+<div class="table-responsive">
+    <table class="table table-striped align-middle">
+        <thead>
             <tr>
-                <th>Id du client source</th>
-                <th>Id du client destination</th>
-                <th>Montant brut</th>
-                <th>Frais/Gain</th>
-                <th>Montant sortant</th>
-                <th>Montant entrant</th>
+                <th>Client source</th>
+                <th>Client destination</th>
+                <th class="text-end">Montant brut</th>
+                <th class="text-end">Frais/Gain</th>
+                <th class="text-end">Montant sortant</th>
+                <th class="text-end">Montant entrant</th>
             </tr>
-            <?php foreach ($listeOperationsTransfert as $operation) { ?>
-            <tr>
-                <td><?= $operation['client_source'] ?? 'Inconnue' ?></td>
-                <td><?= $operation['client_dest'] ?? 'Inconnue' ?></td>
-                <td><?= $operation['montant_brut'] ?? 'Inconnu' ?></td>
-                <td><?= $operation['frais'] ?? 'Inconnus' ?></td>
-                <td><?= $operation['montant_sortant'] ?? 'Inconnus' ?></td>
-                <td><?= $operation['montant_entrant'] ?? 'Inconnus' ?></td>
-            </tr>
-            <?php } ?>
-        </table>
-    <?php } ?>
-</body>
-</html>
+        </thead>
+        <tbody>
+            <?php if (empty($listeOperationsTransfert)): ?>
+                <tr><td colspan="6" class="text-center text-muted">Aucune opération.</td></tr>
+            <?php else: ?>
+                <?php foreach ($listeOperationsTransfert as $operation): ?>
+                <tr>
+                    <td><?= esc($operation['client_source'] ?? '—') ?></td>
+                    <td><?= esc($operation['client_dest'] ?? '—') ?></td>
+                    <td class="text-end"><?= number_format((float) ($operation['montant_brut'] ?? 0), 0, ',', ' ') ?> Ar</td>
+                    <td class="text-end"><?= number_format((float) ($operation['frais'] ?? 0), 0, ',', ' ') ?> Ar</td>
+                    <td class="text-end"><?= number_format((float) ($operation['montant_sortant'] ?? 0), 0, ',', ' ') ?> Ar</td>
+                    <td class="text-end"><?= number_format((float) ($operation['montant_entrant'] ?? 0), 0, ',', ' ') ?> Ar</td>
+                </tr>
+                <?php endforeach; ?>
+            <?php endif; ?>
+        </tbody>
+    </table>
+</div>
+
+<?= view('operateur/partials/footer') ?>

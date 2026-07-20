@@ -45,6 +45,12 @@
             <i class="bi bi-box-arrow-in-right"></i> Se connecter
         </button>
     </form>
+
+    <hr class="my-4">
+
+    <a href="<?= base_url('operateur') ?>" class="btn btn-outline-secondary btn-lg w-100">
+        <i class="bi bi-person-badge"></i> Espace opérateur
+    </a>
 </div>
 </body>
 </html>
