@@ -18,8 +18,13 @@
         - [x] controller
         - [x] route
         - [x] modele
-    - [ ] pages des situation des comptes clients
+    - [x] pages des situation des comptes clients
         - [?] on y montre le solde, les transactions
+        - [x] page
+            - [x] liste des clients
+            - [ ] si on clique sur un client, on va vers une page de detail du client
+                - [x] on y montre le solde du client, les transactions du client
+            
         
 - [ ] client (Harena)
     - [ ]Login automatique par numero sans inscription prealable(AuthController, AuthFilter, CompteModel::getOrCreate, validation du préfixe)

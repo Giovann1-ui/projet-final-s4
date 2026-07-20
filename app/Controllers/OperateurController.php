@@ -2,6 +2,7 @@
 
 namespace App\Controllers;
 
+use App\Models\ClientModel;
 use App\Models\PrefixeOperateurModel;
 use App\Models\OperationModel;
 
@@ -44,6 +45,38 @@ class OperateurController extends BaseController {
             'totalGainsTransfert' => $totalGainsTransfert,
             'listeOperationsRetrait' => $listeOperationsRetrait,
             'listeOperationsTransfert' => $listeOperationsTransfert,
+        ]));
+    }
+
+    public function situationClients() {
+        // if ($redirect = $this->requireRole('operateur')) return $redirect;
+        $operationModel = new OperationModel();
+        $listeClients = $operationModel->getAllClientsWithSolde();
+
+        return view('operateur/situationClient', $this->viewData([
+            'listeClients' => $listeClients,
+        ]));
+    }
+
+    public function situationClientDetail($clientId) {
+        // if ($redirect = $this->requireRole('operateur')) return $redirect;
+        $clientModel = new ClientModel();
+        $operationModel = new OperationModel();
+        $client = $clientModel->find((int) $clientId);
+        $soldeParTypeOperation = $operationModel->getSoldeParTypeOperation($clientId);
+        $soldeTotal = $operationModel->getSoldeTotal($clientId);
+        $transactions = $operationModel->getTransactionsByClient($clientId);
+
+        if (!$client) {
+            return redirect()->to('/operateur/situation-clients');
+        }
+
+        return view('operateur/situationClientDetails', $this->viewData([
+            'client' => $client,
+            'clientId' => $clientId,
+            'soldeParTypeOperation' => $soldeParTypeOperation,
+            'soldeTotal' => $soldeTotal,
+            'transactions' => $transactions,
         ]));
     }
 }
