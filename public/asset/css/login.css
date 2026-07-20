@@ -1,0 +1,403 @@
+  * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+  }
+
+  body {
+      font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: linear-gradient(145deg, #f6f9fc 0%, #edf2f7 100%);
+      min-height: 100vh;
+      color: #1a2b3e;
+      display: flex;
+      flex-direction: column;
+  }
+
+  /* ========== NAVBAR  ========== */
+  .navbar {
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.03), 0 1px 3px rgba(0, 0, 0, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.5);
+      padding: 0.9rem 2.5rem;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+  }
+
+  .nav-container {
+      max-width: 1300px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+  }
+
+  /* Logo + marque */
+  .nav-brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+  }
+
+  .brand-icon {
+      background: linear-gradient(135deg, #2a6df4 0%, #4d8aff 100%);
+      width: 42px;
+      height: 42px;
+      border-radius: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 6px 12px rgba(42, 109, 244, 0.2);
+      transition: transform 0.2s;
+  }
+
+  .brand-icon i {
+      color: white;
+      font-size: 1.6rem;
+  }
+
+  .brand-text {
+      font-weight: 700;
+      font-size: 1.6rem;
+      letter-spacing: -0.02em;
+      color: #0b1e2e;
+  }
+
+  .brand-text span {
+      color: #2a6df4;
+      font-weight: 500;
+      margin-left: 4px;
+  }
+
+  /* Menu de navigation */
+  .nav-menu {
+      display: flex;
+      align-items: center;
+      gap: 2rem;
+  }
+
+  .nav-links {
+      display: flex;
+      list-style: none;
+      gap: 2.2rem;
+  }
+
+  .nav-links a {
+      text-decoration: none;
+      font-weight: 500;
+      color: #2c4056;
+      font-size: 1rem;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 0.5rem 0;
+      border-bottom: 2px solid transparent;
+  }
+
+  .nav-links a i {
+      color: #5e7a9c;
+      font-size: 1.1rem;
+      transition: color 0.2s;
+  }
+
+  .nav-links a:hover {
+      color: #1a4c9e;
+      border-bottom-color: #2a6df4;
+  }
+
+  .nav-links a:hover i {
+      color: #2a6df4;
+  }
+
+  .nav-links .active {
+      color: #1a4c9e;
+      border-bottom-color: #2a6df4;
+      font-weight: 600;
+  }
+
+  .nav-links .active i {
+      color: #2a6df4;
+  }
+
+  /* Barre de recherche */
+  .search-box {
+      display: flex;
+      align-items: center;
+      background: white;
+      border-radius: 60px;
+      padding: 0.45rem 0.45rem 0.45rem 1.2rem;
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03), 0 0 0 1px rgba(0, 0, 0, 0.02);
+      transition: box-shadow 0.2s;
+  }
+
+  .search-box:focus-within {
+      box-shadow: 0 4px 14px rgba(42, 109, 244, 0.12), 0 0 0 2px rgba(42, 109, 244, 0.2);
+  }
+
+  .search-box i {
+      color: #7a95b0;
+      font-size: 1rem;
+  }
+
+  .search-box input {
+      border: none;
+      outline: none;
+      padding: 0.5rem 1rem;
+      font-family: 'Inter', sans-serif;
+      font-size: 0.95rem;
+      min-width: 200px;
+      background: transparent;
+  }
+
+  .search-box input::placeholder {
+      color: #a0b8ce;
+      font-weight: 400;
+  }
+
+  .search-box button {
+      background: #2a6df4;
+      border: none;
+      color: white;
+      border-radius: 50px;
+      padding: 0.5rem 1.3rem;
+      font-weight: 500;
+      font-size: 0.9rem;
+      cursor: pointer;
+      transition: background 0.2s, transform 0.1s;
+      box-shadow: 0 4px 8px rgba(42, 109, 244, 0.2);
+  }
+
+  .search-box button:hover {
+      background: #1a5be0;
+  }
+
+  /* Actions utilisateur (icônes) */
+  .nav-actions {
+      display: flex;
+      align-items: center;
+      gap: 1.2rem;
+  }
+
+  .nav-actions a {
+      color: #345d7e;
+      font-size: 1.3rem;
+      transition: color 0.2s, transform 0.1s;
+      position: relative;
+  }
+
+  .nav-actions a:hover {
+      color: #2a6df4;
+      transform: translateY(-1px);
+  }
+
+  .user-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 12px;
+      background: linear-gradient(145deg, #eef2f6, #dfe7ef);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid white;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.02);
+  }
+
+  .user-avatar i {
+      font-size: 1.3rem;
+      color: #1a3b5c;
+  }
+
+  /* ========== CONTENU PRINCIPAL ========== */
+  .main-wrapper {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 2.5rem 1.5rem;
+  }
+
+  /* Carte conteneur principale — effet verre dépoli */
+  .library-container {
+      max-width: 1100px;
+      width: 100%;
+      background: rgba(255, 255, 255, 0.75);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-radius: 2.5rem;
+      box-shadow:
+          0 20px 40px -8px rgba(15, 25, 40, 0.15),
+          0 4px 12px rgba(0, 0, 0, 0.05),
+          inset 0 1px 0 rgba(255, 255, 255, 0.6);
+      padding: 2.2rem 2.5rem;
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      transition: all 0.2s ease;
+  }
+
+  /* En-tête raffiné */
+  h1 {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-weight: 600;
+      font-size: 2.3rem;
+      letter-spacing: -0.02em;
+      color: #0b1e2e;
+      margin-bottom: 1.8rem;
+      border-bottom: 3px solid rgba(56, 132, 255, 0.25);
+      padding-bottom: 0.85rem;
+  }
+
+  h1 i {
+      color: #2a6df4;
+      font-size: 2rem;
+      background: rgba(42, 109, 244, 0.12);
+      padding: 10px;
+      border-radius: 18px;
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.02);
+  }
+
+  /* Table */
+  .book-table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0 12px;
+      margin-top: 8px;
+  }
+
+  .book-table th {
+      text-align: left;
+      padding: 0.9rem 1.2rem;
+      font-weight: 600;
+      font-size: 0.9rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: #4a6479;
+      background: transparent;
+      border-bottom: 2px solid rgba(42, 109, 244, 0.25);
+  }
+
+  .book-table td {
+      background: white;
+      padding: 1.2rem 1.2rem;
+      border-radius: 20px !important;
+      box-shadow:
+          0 6px 12px -6px rgba(0, 20, 40, 0.08),
+          0 0 0 1px rgba(0, 0, 0, 0.02);
+      font-size: 1.05rem;
+      font-weight: 450;
+      color: #1f3a4b;
+      transition: all 0.25s cubic-bezier(0.2, 0, 0, 1);
+      vertical-align: middle;
+      border: none;
+  }
+
+  .book-table tr {
+      transition: transform 0.15s;
+  }
+
+  .book-table tr:hover td {
+      background: #ffffff;
+      box-shadow:
+          0 18px 24px -10px rgba(26, 67, 113, 0.18),
+          0 0 0 1px rgba(42, 109, 244, 0.25);
+      transform: scale(1.002);
+  }
+
+  .book-table td:first-child {
+      font-weight: 550;
+      color: #0c2a44;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      border-radius: 20px 0 0 20px;
+  }
+
+  .book-table td:first-child::before {
+      content: "📖";
+      font-size: 1.5rem;
+      opacity: 0.7;
+      margin-right: 4px;
+      filter: drop-shadow(0 2px 2px rgba(0, 0, 0, 0.05));
+  }
+
+  .book-table td:nth-child(2) {
+      font-weight: 470;
+      color: #2e506a;
+  }
+
+  .book-table td:nth-child(3) {
+      font-weight: 500;
+      color: #1f4a7a;
+      border-radius: 0 20px 20px 0;
+  }
+
+  /* Pied de page du tableau */
+  .table-footer-note {
+      margin-top: 22px;
+      text-align: right;
+      font-size: 0.85rem;
+      opacity: 0.7;
+      color: #335c7e;
+      font-weight: 400;
+      letter-spacing: 0.3px;
+  }
+
+  table,
+  tr,
+  td,
+  th {
+      border: none;
+  }
+
+  table[border="1"] {
+      border: none;
+  }
+
+  table[border="1"] td,
+  table[border="1"] th {
+      border: none;
+  }
+
+  .book-table tr:focus-within td {
+      outline: 3px solid #2a6df4;
+      outline-offset: 2px;
+  }
+
+  i {
+      font-size: x-large;
+  }
+
+
+  .pagination {
+      display: flex;
+      gap: 6px;
+      list-style: none;
+      padding: 0;
+  }
+
+  .pagination li {
+      margin: 0;
+  }
+
+  .pagination li a,
+  .pagination li span {
+      padding: 6px 12px;
+      border: 1px solid #ddd;
+      border-radius: 5px;
+      text-decoration: none;
+      color: #333;
+  }
+
+  .pagination li.active a,
+  .pagination li.active span {
+      background-color: #0d6efd;
+      color: white !important;
+      border-color: #0d6efd;
+      border-radius: 6px;
+      padding: 6px 12px;
+  }

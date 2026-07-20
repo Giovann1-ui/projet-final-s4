@@ -1,0 +1,6 @@
+writable/logs
+writable/cache
+writable/sessions
+writable/uploads
+writable/debugbar
+writable/session

@@ -1,0 +1,36 @@
+footer {
+    background-color: var(--footer-bg);
+    color: #94a3b8;
+    padding: 40px 0 20px;
+    margin-top: 50px;
+}
+
+footer a {
+    color: #cbd5e1;
+    text-decoration: none;
+    transition: color 0.2s;
+}
+
+footer a:hover {
+    color: white;
+}
+
+.footer-logo {
+    color: white;
+    font-weight: 700;
+    font-size: 1.25rem;
+}
+
+.footer-hr {
+    border-color: rgba(255, 255, 255, 0.1);
+}
+
+.member-id {
+    display: inline-block;
+    background: rgba(255, 255, 255, 0.05);
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin: 2px;
+    font-family: monospace;
+    color: #e2e8f0;
+}
