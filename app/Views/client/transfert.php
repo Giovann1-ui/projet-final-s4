@@ -22,8 +22,8 @@
     <button type="submit" class="btn btn-primary btn-lg w-100">Valider le transfert</button>
 </form>
 
-<p class="mt-3">
-    <a href="<?= base_url('client/envoi-multiple') ?>"><i class="bi bi-people"></i> Envoyer a plusieurs numéros a la fois</a>
-</p>
+<div class="mt-3">
+    <a href="<?= base_url('client/envoi-multiple') ?>" class="btn btn-secondary btn-lg w-100"><i class="bi bi-people"></i> Envoyer a plusieurs numeros a la fois</a>
+</div>
 
 <?= view('client/partials/footer') ?>

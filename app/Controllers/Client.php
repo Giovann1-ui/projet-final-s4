@@ -115,8 +115,7 @@ class Client extends Controller
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $numTelsBrut         = (string) $this->request->getPost('num_tels_dest');
-        $numTels             = preg_split('/[\r\n,;]+/', $numTelsBrut) ?: [];
+        $numTels             = (array) $this->request->getPost('num_tels_dest');
         $montant             = (float) $this->request->getPost('montant');
         $inclureFraisRetrait = (bool) $this->request->getPost('inclure_frais_retrait');
         $clientId            = session('client')['id'];
