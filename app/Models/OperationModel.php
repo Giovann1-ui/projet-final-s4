@@ -89,4 +89,44 @@ class OperationModel extends Model
             ],
         ];
     }
+
+    public function getGainsByTypeOperation(int $typeOperationId): float
+    {
+        $gain = $this->selectSum('frais')
+            ->where('type_operation', $typeOperationId)
+            ->get()->getRowArray()['frais'] ?? 0;
+
+        return (float) $gain;
+    }
+
+    public function getOperationByTypeOperation(int $typeOperationId): array
+    {
+        return $this->where('type_operation', $typeOperationId)
+            ->orderBy('date', 'DESC')
+            ->findAll();
+    }
+
+    public function getAllClientsWithSolde(): array
+    {
+        $clientModel = new ClientModel();
+        $clients = $clientModel->findAll();
+
+        foreach ($clients as &$client) {
+            $client['solde'] = $this->getSoldeTotal($client['id']);
+        }
+
+        return $clients;
+    }
+
+    public function getTransactionsByClient(int $clientId): array
+    {
+        return $this->select('operation.*, type_operation.libelle AS type_libelle')
+            ->join('type_operation', 'type_operation.id = operation.type_operation', 'left')
+            ->groupStart()
+                ->where('operation.client_source', $clientId)
+                ->orWhere('operation.client_dest', $clientId)
+            ->groupEnd()
+            ->orderBy('operation.date', 'DESC')
+            ->findAll();
+    }
 }

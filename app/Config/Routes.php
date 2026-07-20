@@ -10,13 +10,9 @@ $routes->group('/operateur', static function ($routes) {
     $routes->get('/', 'OperateurController::index');
     $routes->get('creer', 'OperateurController::creerOperateur');
     $routes->post('creer', 'OperateurController::storeOperateur');
-    $routes->get('transactions', 'OperateurController::transactions');
-    $routes->get('transactions/(:num)', 'OperateurController::transactionDetail/$1');
-    $routes->post('transactions/traiter/(:num)', 'OperateurController::transactionTraiter/$1');
-    $routes->get('clients', 'OperateurController::clients');
-    $routes->get('clients/(:num)', 'OperateurController::clientDetail/$1');
-    $routes->post('clients/crediter/(:num)', 'OperateurController::clientCrediter/$1');
-    $routes->post('clients/debiter/(:num)', 'OperateurController::clientDebiter/$1');
+    $routes->get('situation-gains', 'OperateurController::situationGains');
+    $routes->get('situation-clients', 'OperateurController::situationClients');
+    $routes->get('situation-clients/(:num)', 'OperateurController::situationClientDetail/$1');
 });
 $routes->get('solde', 'Solde::index');
 
