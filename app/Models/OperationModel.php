@@ -50,4 +50,20 @@ class OperationModel extends Model
 
         return (float) $entrant - (float) $sortant;
     }
+
+    public function getGainsByTypeOperation(int $typeOperationId): float
+    {
+        $gain = $this->selectSum('frais')
+            ->where('type_operation', $typeOperationId)
+            ->get()->getRowArray()['frais'] ?? 0;
+
+        return (float) $gain;
+    }
+
+    public function getOperationByTypeOperation(int $typeOperationId): array
+    {
+        return $this->where('type_operation', $typeOperationId)
+            ->orderBy('date', 'DESC')
+            ->findAll();
+    }
 }
