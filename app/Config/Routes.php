@@ -18,6 +18,7 @@ $routes->group('/operateur', static function ($routes) {
     $routes->post('clients/crediter/(:num)', 'OperateurController::clientCrediter/$1');
     $routes->post('clients/debiter/(:num)', 'OperateurController::clientDebiter/$1');
 });
+$routes->get('solde', 'Solde::index');
 
 // $routes->get('/', 'Auth::index');
 // $routes->get('/login', 'Auth::index');
