@@ -6,6 +6,18 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
+$routes->group('/operateur', static function ($routes) {
+    $routes->get('/', 'OperateurController::index');
+    $routes->get('creer', 'OperateurController::creerOperateur');
+    $routes->post('creer', 'OperateurController::storeOperateur');
+    $routes->get('transactions', 'OperateurController::transactions');
+    $routes->get('transactions/(:num)', 'OperateurController::transactionDetail/$1');
+    $routes->post('transactions/traiter/(:num)', 'OperateurController::transactionTraiter/$1');
+    $routes->get('clients', 'OperateurController::clients');
+    $routes->get('clients/(:num)', 'OperateurController::clientDetail/$1');
+    $routes->post('clients/crediter/(:num)', 'OperateurController::clientCrediter/$1');
+    $routes->post('clients/debiter/(:num)', 'OperateurController::clientDebiter/$1');
+});
 $routes->get('solde', 'Solde::index');
 
 // $routes->get('/', 'Auth::index');
