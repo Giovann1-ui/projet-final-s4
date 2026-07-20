@@ -12,9 +12,9 @@
             - [x] route
             - [x] vue
             - [x] modele
-    - [ ] page de situation des gains via les differents frais (retrait et transfert)
+    - [x] page de situation des gains via les differents frais (retrait et transfert)
         - [?] c'est une page qui affiche le total de gains pour les retraits et transferts
-        - [ ] page
+        - [x] page
         - [x] controller
         - [x] route
         - [x] modele
