@@ -41,26 +41,4 @@ abstract class BaseController extends Controller
                 ->with('error', 'Accès non autorisé.');
         }
     }
-
-    protected function recrediterSoldeSiNecessaire(array $demande): void
-    {
-        if ($demande['statut'] !== 'approuvee') {
-            return;
-        }
-
-        $typeCongeModel = new TypeCongeModel();
-        $type = $typeCongeModel->find((int) $demande['type_conge_id']);
-
-        if (!$type || (int) $type['deductible'] !== 1) {
-            return;
-        }
-
-        $soldeModel = new SoldeModel();
-        $soldeModel->crediterJours(
-            (int) $demande['employe_id'],
-            (int) $demande['type_conge_id'],
-            (int) date('Y', strtotime($demande['date_debut'])),
-            (int) $demande['nb_jours']
-        );
-    }
 }
