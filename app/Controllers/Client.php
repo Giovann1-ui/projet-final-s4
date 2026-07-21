@@ -141,26 +141,28 @@ class Client extends Controller
 
     public function epargne()
     {
+        $clientId     = session('client')['id'];
         $epargneModel = new EpargneModel();
 
         return view('client/epargne', $this->viewData([
-            'pourcentage' => $epargneModel->getPourcentage(),
+            'pourcentage' => $epargneModel->getPourcentage($clientId),
+            'solde'       => $epargneModel->getSolde($clientId),
         ]));
     }
 
     public function epargneUpdate()
     {
-        // if ($redirect = $this->requireRole('operateur')) return $redirect;
         if (!$this->validate([
             'pourcentage' => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
         ])) {
             return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
         }
 
-        $epargneModel = new epargneModel();
-        $epargneModel->updatePourcentage((float) $this->request->getPost('pourcentage'));
+        $clientId     = session('client')['id'];
+        $epargneModel = new EpargneModel();
+        $epargneModel->updatePourcentage($clientId, (float) $this->request->getPost('pourcentage'));
 
-        return redirect()->to('/client/epargne')->with('success', 'Pourcentage d epargne mis a jour.');
+        return redirect()->to('/client/epargne')->with('success', "Pourcentage d'épargne mis à jour.");
     }
 
     public function historique()

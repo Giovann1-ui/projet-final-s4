@@ -4,6 +4,7 @@ namespace App\Libraries;
 
 use App\Models\BaremeFraisModel;
 use App\Models\ClientModel;
+use App\Models\EpargneModel;
 use App\Models\OperationModel;
 use App\Models\PrefixeOperateurModel;
 use App\Models\PromotionModel;
@@ -25,6 +26,7 @@ class FraisService
     protected PrefixeOperateurModel $prefixeOperateurModel;
     protected OperateurModel $operateurModel;
     protected PromotionModel $promotionModel;
+    protected EpargneModel $epargneModel;
     protected $db;
 
     public function __construct(
@@ -34,7 +36,8 @@ class FraisService
         ?BaremeFraisModel $baremeFraisModel = null,
         ?PrefixeOperateurModel $prefixeOperateurModel = null,
         ?OperateurModel $operateurModel = null,
-        ?PromotionModel $promotionModel = null
+        ?PromotionModel $promotionModel = null,
+        ?EpargneModel $epargneModel = null
 
     ) {
         $this->clientModel          = $clientModel ?? new ClientModel();
@@ -44,6 +47,7 @@ class FraisService
         $this->prefixeOperateurModel = $prefixeOperateurModel ?? new PrefixeOperateurModel();
         $this->operateurModel        = $operateurModel ?? new OperateurModel();
         $this->promotionModel        = $promotionModel ?? new PromotionModel();
+        $this->epargneModel          = $epargneModel ?? new EpargneModel();
         $this->db                   = Database::connect();
     }
 
@@ -180,8 +184,11 @@ class FraisService
 
         $commission = $this->getCommission($source['num_tel'], $numTelDestinataire);
 
-        $montantEntrant = $montant + $fraisRetrait ;
+        $montantEntrant = $montant + $fraisRetrait;
         $montantSortant = $montant + $fraisTransfert + $fraisRetrait + ($montant * ($commission / 100));
+
+        $montantEpargne = $this->calculerMontantEpargne((int) $dest['id'], $montantEntrant);
+        $montantEntrant -= $montantEpargne;
 
         $this->db->transStart();
 
@@ -205,6 +212,11 @@ class FraisService
             'montant_sortant' => $montantSortant,
             'date'            => date('Y-m-d H:i:s'),
         ]);
+
+        if ($montantEpargne > 0) {
+            $this->epargneModel->ajouterMontant((int) $dest['id'], $montantEpargne);
+        }
+
         $this->db->transComplete();
         $this->assertTransactionOk();
 
@@ -268,6 +280,9 @@ class FraisService
 
         $operations = [];
         foreach ($destinataires as $dest) {
+            $montantEpargne     = $this->calculerMontantEpargne((int) $dest['id'], $montantEntrant);
+            $montantEntrantDest = $montantEntrant - $montantEpargne;
+
             $id = $this->operationModel->insert([
                 'type_operation'  => $typeId,
                 'client_source'   => $clientIdSource,
@@ -275,10 +290,15 @@ class FraisService
                 'montant_brut'    => $montantParDestinataire,
                 'frais'           => $fraisTransfert,
                 'frais_retrait'   => $fraisRetrait,
-                'montant_entrant' => $montantEntrant,
+                'montant_entrant' => $montantEntrantDest,
                 'montant_sortant' => $montantSortantUnitaire,
                 'date'            => date('Y-m-d H:i:s'),
             ]);
+
+            if ($montantEpargne > 0) {
+                $this->epargneModel->ajouterMontant((int) $dest['id'], $montantEpargne);
+            }
+
             $operations[] = $this->operationModel->find($id);
         }
 
@@ -297,6 +317,17 @@ class FraisService
         }
 
         return round($frais - ($frais * $pourcentage / 100), 2);
+    }
+
+    private function calculerMontantEpargne(int $clientDestId, float $montantEntrant): float
+    {
+        $pourcentage = $this->epargneModel->getPourcentage($clientDestId);
+
+        if ($pourcentage <= 0) {
+            return 0.0;
+        }
+
+        return round($montantEntrant * $pourcentage / 100, 2);
     }
 
     private function memeOperateur(string $numTel1, string $numTel2): bool

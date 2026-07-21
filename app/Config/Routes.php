@@ -37,7 +37,7 @@ $routes->group('client', static function ($routes) {
         $routes->post('envoi-multiple', 'Client::envoiMultipleStore');
         $routes->get('historique', 'Client::historique');
         $routes->get('epargne', 'Client::epargne');
-        $routes->post('epargne', 'Client::epargne');
+        $routes->post('epargne', 'Client::epargneUpdate');
     });
 });
 

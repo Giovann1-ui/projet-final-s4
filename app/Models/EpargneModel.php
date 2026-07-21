@@ -8,22 +8,55 @@ class EpargneModel extends Model
 {
     protected $table         = 'epargne';
     protected $primaryKey    = 'id';
-    protected $client_id     = 'client_id';
-    protected $allowedFields = ['pourcentage'];
 
-    public function getPourcentage(): float
+    protected $allowedFields = ['client_id', 'pourcentage', 'solde'];
+
+    public function getByClient(int $clientId): ?array
     {
-        $promotion = $this->find(1);
-
-        return $promotion !== null ? (float) $promotion['pourcentage'] : 0.0;
+        return $this->where('client_id', $clientId)->first();
     }
 
-    public function updatePourcentage(float $pourcentage): bool
+    public function getPourcentage(int $clientId): float
     {
-        if ($this->find(1) === null) {
-            return $this->insert(['id' => 1, 'pourcentage' => $pourcentage]) !== false;
+        $epargne = $this->getByClient($clientId);
+
+        return $epargne !== null ? (float) $epargne['pourcentage'] : 0.0;
+    }
+
+    public function getSolde(int $clientId): float
+    {
+        $epargne = $this->getByClient($clientId);
+
+        return $epargne !== null ? (float) $epargne['solde'] : 0.0;
+    }
+
+    public function updatePourcentage(int $clientId, float $pourcentage): bool
+    {
+        $epargne = $this->getByClient($clientId);
+
+        if ($epargne === null) {
+            return $this->insert([
+                'client_id'   => $clientId,
+                'pourcentage' => $pourcentage,
+                'solde'       => 0.00,
+            ]) !== false;
         }
 
-        return $this->update(1, ['pourcentage' => $pourcentage]);
+        return $this->update($epargne['id'], ['pourcentage' => $pourcentage]);
+    }
+
+    public function ajouterMontant(int $clientId, float $montant): bool
+    {
+        $epargne = $this->getByClient($clientId);
+
+        if ($epargne === null) {
+            return $this->insert([
+                'client_id'   => $clientId,
+                'pourcentage' => 0.00,
+                'solde'       => $montant,
+            ]) !== false;
+        }
+
+        return $this->update($epargne['id'], ['solde' => (float) $epargne['solde'] + $montant]);
     }
 }

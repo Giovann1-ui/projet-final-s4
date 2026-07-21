@@ -1,10 +1,15 @@
-<?= view('client/partials/header', ['activePage' => 'promotion']) ?>
+<?= view('client/partials/header', ['activePage' => 'epargne']) ?>
 
-<h3 class="mb-4"><i class="bi bi-percent"></i> Epargne pourcentage</h3>
+<h3 class="mb-4"><i class="bi bi-percent"></i> Épargne</h3>
 
 <p class="text-muted">
-    Ce pourcentage deduit les montant de transfert pour transformer  en epargne
+    Ce pourcentage est déduit de chaque transfert que vous recevez et mis de côté en épargne.
 </p>
+
+<div class="total-box mb-4 text-center">
+    <div>Solde épargné</div>
+    <div class="montant"><?= number_format($solde, 0, ',', ' ') ?> Ar</div>
+</div>
 
 <form action="<?= base_url('client/epargne') ?>" method="post" class="row g-2 mb-4">
     <?= csrf_field() ?>
@@ -30,3 +35,4 @@
     </div>
 </form>
 
+<?= view('client/partials/footer') ?>
