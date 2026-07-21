@@ -55,7 +55,13 @@
             - [x] route
             - [x] controller
             - [x] modele
-    - [ ] page de situation a envoyer a chaque operateur
+    - [x] page de situation a envoyer a chaque operateur
+        - [x] page
+            - [x] creer la page
+        - [x] controller
+            - [x] creer le controller
+            - [x] faire attention aux gestion de tableau associatif
+        - [x] route
 
 - [x] client (Harena)
     - [x] Option inclure frais de retrait lors de l’envoi
