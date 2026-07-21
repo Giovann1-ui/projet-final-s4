@@ -154,6 +154,34 @@ class OperationModel extends Model
         return (float) ($result['total_frais'] ?? 0.0);
     }
 
+    public function getGainsByTypeOperationAndPrefixeSQL(int $typeOperationId, array|string $prefixeOperateur): float
+    {
+        $prefixes = $this->cleanPrefixes($prefixeOperateur);
+        if (empty($prefixes)) return 0.0;
+
+        $joinColumn = ($typeOperationId === 2) ? 'operation.client_source' : 'operation.client_dest';
+
+        // Construction dynamique de la clause LIKE
+        $likeConditions = [];
+        $params = [$typeOperationId];
+
+        foreach ($prefixes as $prefixe) {
+            $likeConditions[] = "client.num_tel LIKE ?";
+            $params[] = $prefixe . '%'; // 'after' dans CI4 correspond à ajouter '%' à la fin
+        }
+
+        $sql = "SELECT SUM(operation.frais) AS total_frais
+            FROM operation
+            JOIN client ON client.id = {$joinColumn}
+            WHERE operation.type_operation = ?
+              AND (" . implode(' OR ', $likeConditions) . ")";
+
+        $query = $this->db->query($sql, $params);
+        $row = $query->getRowArray();
+
+        return (float) ($row['total_frais'] ?? 0.0);
+    }
+
     public function getOperationByTypeOperationAndPrefixe(int $typeOperationId, array|string $prefixeOperateur): array
     {
         $prefixes = $this->cleanPrefixes($prefixeOperateur);
@@ -179,6 +207,35 @@ class OperationModel extends Model
         $builder->groupEnd();
 
         return $builder->orderBy('operation.date', 'DESC')->findAll();
+    }
+
+    public function getOperationByTypeOperationAndPrefixeSQL(int $typeOperationId, array|string $prefixeOperateur): array
+    {
+        $prefixes = $this->cleanPrefixes($prefixeOperateur);
+        if (empty($prefixes)) return [];
+
+        $joinColumn = ($typeOperationId === 2) ? 'operation.client_source' : 'operation.client_dest';
+
+        // Construction dynamique de la clause LIKE
+        $likeConditions = [];
+        $params = [$typeOperationId];
+
+        foreach ($prefixes as $prefixe) {
+            $likeConditions[] = "client.num_tel LIKE ?";
+            $params[] = $prefixe . '%'; // 'after' dans CI4 correspond à ajouter '%' à la fin
+        }
+
+        $sql = "SELECT operation.*, cs.num_tel AS num_tel_source, cd.num_tel AS num_tel_dest
+            FROM operation
+            LEFT JOIN client cs ON cs.id = operation.client_source
+            LEFT JOIN client cd ON cd.id = operation.client_dest
+            JOIN client ON client.id = {$joinColumn}
+            WHERE operation.type_operation = ?
+              AND (" . implode(' OR ', $likeConditions) . ")
+            ORDER BY operation.date DESC";
+
+        $query = $this->db->query($sql, $params);
+        return $query->getResultArray();
     }
 
     public function getOperationsByPrefixe(array|string $prefixeOperateur): array
@@ -210,7 +267,7 @@ class OperationModel extends Model
     private function cleanPrefixes(array|string $prefixeOperateur): array
     {
         $array = is_array($prefixeOperateur) ? $prefixeOperateur : [$prefixeOperateur];
-        
+
         return array_values(array_filter(array_map(
             static fn($code) => substr(trim((string) $code), 0, 3),
             $array
@@ -231,13 +288,22 @@ class OperationModel extends Model
 
     public function getTransactionsByClient(int $clientId): array
     {
-        return $this->select('operation.*, type_operation.libelle AS type_libelle')
-            ->join('type_operation', 'type_operation.id = operation.type_operation', 'left')
-            ->groupStart()
-            ->where('operation.client_source', $clientId)
-            ->orWhere('operation.client_dest', $clientId)
-            ->groupEnd()
-            ->orderBy('operation.date', 'DESC')
-            ->findAll();
+        // return $this->select('operation.*, type_operation.libelle AS type_libelle')
+        //     ->join('type_operation', 'type_operation.id = operation.type_operation', 'left')
+        //     ->groupStart()
+        //     ->where('operation.client_source', $clientId)
+        //     ->orWhere('operation.client_dest', $clientId)
+        //     ->groupEnd()
+        //     ->orderBy('operation.date', 'DESC')
+        //     ->findAll();
+        $sql = "SELECT operation.*, cs.num_tel AS num_tel_source, cd.num_tel AS num_tel_dest, type_operation.libelle AS type_libelle
+                FROM operation
+                LEFT JOIN type_operation ON type_operation.id = operation.type_operation
+                LEFT JOIN client cs ON cs.id = operation.client_source
+                LEFT JOIN client cd ON cd.id = operation.client_dest
+                WHERE operation.client_source = ? OR operation.client_dest = ?
+                ORDER BY operation.date DESC";
+        $query = $this->db->query($sql, [$clientId, $clientId]);
+        return $query->getResultArray();
     }
 }

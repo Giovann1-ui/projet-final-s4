@@ -33,7 +33,7 @@
                 <?php foreach ($autresOperateurs as $operateur): ?>
                 <tr>
                     <td><?= esc($operateur['libelle'] ?? '—') ?></td>
-                    <td class="text-end"><?= number_format((float) ($operateur['commission'] ?? 0), 0, ',', ' ') ?> Ar</td>
+                    <td class="text-end"><?= number_format((float) ($operateur['commission'] ?? 0), 0, ',', ' ') ?> %</td>
                 </tr>
                 <?php endforeach; ?>
             <?php endif; ?>
@@ -51,6 +51,7 @@
                 <th>Client destination</th>
                 <th class="text-end">Montant brut</th>
                 <th class="text-end">Frais</th>
+                <th class="text-end">Commission</th>
                 <th class="text-end">Montant sortant</th>
                 <th class="text-end">Montant entrant</th>
             </tr>
@@ -66,6 +67,7 @@
                     <td><?= esc($operation['num_tel_dest'] ?? $operation['client_dest'] ?? '—') ?></td>
                     <td class="text-end"><?= number_format((float) ($operation['montant_brut'] ?? 0), 0, ',', ' ') ?> Ar</td>
                     <td class="text-end"><?= number_format((float) ($operation['frais'] ?? 0), 0, ',', ' ') ?> Ar</td>
+                    <td class="text-end"><?= number_format((float) ($operation['commission'] ?? 0), 0, ',', ' ') ?> %</td>
                     <td class="text-end"><?= number_format((float) ($operation['montant_sortant'] ?? 0), 0, ',', ' ') ?> Ar</td>
                     <td class="text-end"><?= number_format((float) ($operation['montant_entrant'] ?? 0), 0, ',', ' ') ?> Ar</td>
                 </tr>
@@ -114,13 +116,14 @@
                 <th>Client destination</th>
                 <th class="text-end">Montant brut</th>
                 <th class="text-end">Frais/Gain</th>
+                <th class="text-end">Frais de retrait</th>
                 <th class="text-end">Montant sortant</th>
                 <th class="text-end">Montant entrant</th>
             </tr>
         </thead>
         <tbody>
             <?php if (empty($listeOperationsTransfert)): ?>
-                <tr><td colspan="6" class="text-center text-muted">Aucune opération.</td></tr>
+                <tr><td colspan="7" class="text-center text-muted">Aucune opération.</td></tr>
             <?php else: ?>
                 <?php foreach ($listeOperationsTransfert as $operation): ?>
                 <tr>
@@ -128,6 +131,7 @@
                     <td><?= esc($operation['num_tel_dest'] ?? '—') ?></td>
                     <td class="text-end"><?= number_format((float) ($operation['montant_brut'] ?? 0), 0, ',', ' ') ?> Ar</td>
                     <td class="text-end"><?= number_format((float) ($operation['frais'] ?? 0), 0, ',', ' ') ?> Ar</td>
+                    <td class="text-end"><?= number_format((float) ($operation['frais_retrait'] ?? 0), 0, ',', ' ') ?> Ar</td>
                     <td class="text-end"><?= number_format((float) ($operation['montant_sortant'] ?? 0), 0, ',', ' ') ?> Ar</td>
                     <td class="text-end"><?= number_format((float) ($operation['montant_entrant'] ?? 0), 0, ',', ' ') ?> Ar</td>
                 </tr>

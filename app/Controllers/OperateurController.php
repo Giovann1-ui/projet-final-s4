@@ -52,7 +52,7 @@ class OperateurController extends BaseController
             ->findAll();
 
         // 2. Récupérer TOUS les préfixes (pour vos propres gains Retraits / Transferts)
-        $prefixeOperateur = $prefixeModel->getAllPrefixeOperateurs();
+        $prefixeOperateur = $prefixeModel->getallPrefixeOperateursByUs();
         $prefixeCodes = array_column($prefixeOperateur, 'code');
 
         // 3. Récupérer les préfixes uniquement des AUTRES opérateurs pour la table du milieu
@@ -64,11 +64,11 @@ class OperateurController extends BaseController
         }
 
         // Calcul des totaux et listes (Notre réseau "isUs")
-        $totalGainsRetrait   = $operationModel->getGainsByTypeOperationAndPrefixe(2, $prefixeCodes);
-        $totalGainsTransfert = $operationModel->getGainsByTypeOperationAndPrefixe(3, $prefixeCodes);
+        $totalGainsRetrait   = $operationModel->getGainsByTypeOperationAndPrefixeSQL(2, $prefixeCodes);
+        $totalGainsTransfert = $operationModel->getGainsByTypeOperationAndPrefixeSQL(3, $prefixeCodes);
         
-        $listeOperationsRetrait   = $operationModel->getOperationByTypeOperationAndPrefixe(2, $prefixeCodes);
-        $listeOperationsTransfert = $operationModel->getOperationByTypeOperationAndPrefixe(3, $prefixeCodes);
+        $listeOperationsRetrait   = $operationModel->getOperationByTypeOperationAndPrefixeSQL(2, $prefixeCodes);
+        $listeOperationsTransfert = $operationModel->getOperationByTypeOperationAndPrefixeSQL(3, $prefixeCodes);
 
         // 4. Récupération de la liste manquante pour la vue !
         $listeOperationsAutres = [];
@@ -104,7 +104,7 @@ class OperateurController extends BaseController
         $operationModel = new OperationModel();
         $client = $clientModel->find((int) $clientId);
         $soldeParTypeOperation = $operationModel->getSoldeParTypeOperation($clientId);
-        $soldeTotal = $operationModel->getSolde($clientId);
+        $soldeTotal = $operationModel->getSoldeTotal($clientId);
         $transactions = $operationModel->getTransactionsByClient($clientId);
 
         if (!$client) {

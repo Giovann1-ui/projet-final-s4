@@ -15,6 +15,15 @@ class PrefixeOperateurModel extends Model
         return $this->findAll();
     }
 
+    public function getallPrefixeOperateursByUs()
+    {
+        $sql = "SELECT po.code --, o.libelle AS operateur_libelle
+                FROM prefixe_operateur po
+                JOIN operateur o ON po.operateur_id = o.id
+                WHERE o.isUs = 1";
+        return $this->db->query($sql)->getResultArray();
+    }
+
     public function getPrefixeOperateurById($id = null)
     {
         return $this->find($id);

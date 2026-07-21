@@ -82,8 +82,8 @@
                 <tr>
                     <td><?= !empty($transaction['date']) ? date('d/m/Y H:i', strtotime($transaction['date'])) : '—' ?></td>
                     <td><?= esc($transaction['type_libelle'] ?? '—') ?> <span class="text-muted small"><?= $direction ?></span></td>
-                    <td><?= $transaction['client_source'] !== null ? (int) $transaction['client_source'] : '—' ?></td>
-                    <td><?= $transaction['client_dest'] !== null ? (int) $transaction['client_dest'] : '—' ?></td>
+                    <td><?= $transaction['num_tel_source'] !== null ?  $transaction['num_tel_source'] : '—' ?></td>
+                    <td><?= $transaction['num_tel_dest'] !== null ?  $transaction['num_tel_dest'] : '—' ?></td>
                     <td class="text-end"><?= number_format((float) ($transaction['montant_brut'] ?? 0), 0, ',', ' ') ?> Ar</td>
                     <td class="text-end"><?= number_format((float) ($transaction['frais'] ?? 0), 0, ',', ' ') ?> Ar</td>
                     <td class="text-end <?= $isIncoming ? 'text-success' : 'text-muted' ?>"><?= number_format((float) ($transaction['montant_entrant'] ?? 0), 0, ',', ' ') ?> Ar</td>

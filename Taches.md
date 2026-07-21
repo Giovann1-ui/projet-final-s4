@@ -47,13 +47,13 @@
         - [x] modification de base deja faite
     - [x] Configuration % en plus de commissions pour les transferts vers les autres opérateurs
         - [x] modification de base deja faite
-    - [ ] page situationGain
-        - [ ] separer operateur et autres operateurs
-            - [ ] page
-                - [ ] ajouter montant total des gains pour les retraits et transferts pour chaque operateur
-                - [ ] liste des operations RETRAIT et TRANSFERT pour chaque operateur
+    - [x] page situationGain
+        - [x] separer operateur et autres operateurs
+            - [x] page
+                <!-- - [ ] ajouter montant total des gains pour les retraits et transferts pour chaque operateur -->
+                - [x] liste des operations RETRAIT et TRANSFERT pour chaque operateur
             - [x] route
-            - [ ] controller
+            - [x] controller
             - [x] modele
     - [ ] page de situation a envoyer a chaque operateur
 
