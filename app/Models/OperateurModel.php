@@ -18,4 +18,15 @@ class OperateurModel extends Model
     {
         return $this->find($id)['commission'] ?? null;
     }
+
+    public function isNotreOperateur(?int $id): bool
+    {
+        if ($id === null) {
+            return false;
+        }
+
+        $operateur = $this->find($id);
+
+        return $operateur !== null && (bool) $operateur['isUs'];
+    }
 }

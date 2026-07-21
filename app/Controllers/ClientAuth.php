@@ -3,6 +3,7 @@
 namespace App\Controllers;
 
 use App\Models\ClientModel;
+use App\Models\OperateurModel;
 use App\Models\PrefixeOperateurModel;
 use CodeIgniter\Controller;
 
@@ -29,17 +30,27 @@ class ClientAuth extends Controller
         $clientModel = new ClientModel();
         $client      = $clientModel->findByNumTel($numTel);
 
+        $prefixe        = substr($numTel, 0, 3);
+        $prefixeModel   = new PrefixeOperateurModel();
+        $operateurModel = new OperateurModel();
+
+        if (!$prefixeModel->isPrefixeValide($prefixe)) {
+            return redirect()->back()->withInput()->with(
+                'error',
+                "Prefixe operateur invalide ({$prefixe}). Numero non reconnu."
+            );
+        }
+
+        $operateurId = $prefixeModel->getOperateurIdByPrefixe($prefixe);
+
+        if (!$operateurModel->isNotreOperateur($operateurId)) {
+            return redirect()->back()->withInput()->with(
+                'error',
+                "Cet operateur n'est pas pris en charge sur cette plateforme."
+            );
+        }
+
         if ($client === null) {
-            $prefixe       = substr($numTel, 0, 3);
-            $prefixeModel  = new PrefixeOperateurModel();
-
-            if (!$prefixeModel->isPrefixeValide($prefixe)) {
-                return redirect()->back()->withInput()->with(
-                    'error',
-                    "Préfixe opérateur invalide ({$prefixe}). Numéro non reconnu."
-                );
-            }
-
             $client = $clientModel->getOrCreate($numTel);
         }
 
