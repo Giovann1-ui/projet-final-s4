@@ -13,6 +13,7 @@ class InitialSeeder extends Seeder
             $this->db->table('operateur')->insertBatch([
                 ['id' => 1, 'libelle' => 'YAS', 'isUs' => true, 'commission' => 0.00],
                 ['id' => 2, 'libelle' => 'Airtel', 'isUs' => false, 'commission' => 10.00],
+                ['id' => 3, 'libelle' => 'Orange', 'isUs' => false, 'commission' => 15.00],
             ]);
         }
 
@@ -21,6 +22,8 @@ class InitialSeeder extends Seeder
                 ['code' => '034', 'operateur_id' => 1],
                 ['code' => '038', 'operateur_id' => 1],
                 ['code' => '033', 'operateur_id' => 2],
+                ['code' => '032', 'operateur_id' => 3],
+                ['code' => '037', 'operateur_id' => 3],
             ]);
         }
 
@@ -40,6 +43,8 @@ class InitialSeeder extends Seeder
                 ['id' => 2, 'num_tel' => '0349876543', 'date_inscription' => date('Y-m-d H:i:s')],
                 ['id' => 3, 'num_tel' => '0337654321', 'date_inscription' => date('Y-m-d H:i:s')],
                 ['id' => 4, 'num_tel' => '0331234567', 'date_inscription' => date('Y-m-d H:i:s')],
+                ['id' => 5, 'num_tel' => '0327654321', 'date_inscription' => date('Y-m-d H:i:s')],
+                ['id' => 6, 'num_tel' => '0371234567', 'date_inscription' => date('Y-m-d H:i:s')],
             ]);
         }
 

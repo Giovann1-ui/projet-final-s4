@@ -72,7 +72,7 @@ class OperateurController extends BaseController
 
         $totalGainsRetraitToutOperateurs   = $operationModel->getGainsByTypeOperationAndPrefixeSQL(2, $prefixeToutCodes);
         $totalGainsTransfertToutOperateurs = $operationModel->getGainsByTypeOperationAndPrefixeSQL(3, $prefixeToutCodes);
-        
+
         $listeOperationsRetrait   = $operationModel->getOperationByTypeOperationAndPrefixeSQL(2, $prefixeCodes);
         $listeOperationsTransfert = $operationModel->getOperationByTypeOperationAndPrefixeSQL(3, $prefixeCodes);
 
@@ -125,6 +125,61 @@ class OperateurController extends BaseController
             'soldeParTypeOperation' => $soldeParTypeOperation,
             'soldeTotal' => $soldeTotal,
             'transactions' => $transactions,
+        ]));
+    }
+
+    // on montre le montant due (leur gains) aux autres operateurs (isUs = 0)
+    public function situationAutresOperateurs()
+    {
+        // if ($redirect = $this->requireRole('operateur')) return $redirect;
+
+        $operateurModel = new OperateurModel();
+        $operationModel = new OperationModel();
+        $prefixeModel   = new PrefixeOperateurModel();
+
+        // 1. Récupérer tous les autres opérateurs (isUs = 0)
+        $autresOperateurs = $operateurModel->where('isUs', 0)->findAll();
+
+        $listeAutresOperateurs = [];
+        $listeOperationsAutres = [];
+        $listeGainsAutres      = [];
+
+        foreach ($autresOperateurs as $op) {
+            $opId = $op['id'];
+
+            // Récupérer les préfixes de cet opérateur spécifique
+            $prefixes = $prefixeModel->where('operateur_id', $opId)->findColumn('code') ?? [];
+
+            // On stocke l'opérateur avec ses préfixes
+            $op['prefixes'] = $prefixes;
+            $listeAutresOperateurs[$opId] = $op;
+
+            // Si l'opérateur a des préfixes enregistrés
+            if (!empty($prefixes)) {
+                // Récupérer les opérations de transfert (3) associées à ces préfixes
+                $operations = $operationModel->getOperationByTypeOperationAndPrefixeSQL(3, $prefixes);
+                $listeOperationsAutres[$opId] = $operations;
+
+                // Calcul du gain basé sur le taux de commission de l'opérateur
+                $commissionTaux = (float) ($op['commission'] ?? 0);
+                $totalGains = 0.0;
+
+                foreach ($operations as $operation) {
+                    // Commission = Montant brut * (% commission / 100)
+                    $totalGains += (float) ($operation['montant_brut'] * ($commissionTaux / 100));
+                }
+
+                $listeGainsAutres[$opId] = $totalGains;
+            } else {
+                $listeOperationsAutres[$opId] = [];
+                $listeGainsAutres[$opId]      = 0.0;
+            }
+        }
+
+        return view('operateur/situationAutresOperateurs', $this->viewData([
+            'listeAutresOperateurs' => $listeAutresOperateurs,
+            'listeGainsAutres'      => $listeGainsAutres,
+            'listeOperationsAutres' => $listeOperationsAutres,
         ]));
     }
 }
