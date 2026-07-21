@@ -31,6 +31,7 @@
             <a class="nav-link <?= $active === 'creer' ? 'fw-bold text-white' : 'text-white-50' ?>" href="<?= base_url('operateur/creer') ?>">Préfixes</a>
             <a class="nav-link <?= $active === 'gains' ? 'fw-bold text-white' : 'text-white-50' ?>" href="<?= base_url('operateur/situation-gains') ?>">Situation des gains</a>
             <a class="nav-link <?= $active === 'clients' ? 'fw-bold text-white' : 'text-white-50' ?>" href="<?= base_url('operateur/situation-clients') ?>">Situation des clients</a>
+            <a class="nav-link <?= $active === 'promotion' ? 'fw-bold text-white' : 'text-white-50' ?>" href="<?= base_url('operateur/promotion') ?>">Promotion</a>
             <a class="nav-link text-white-50" href="<?= base_url('client/login') ?>">Espace client</a>
         </div>
     </div>
@@ -41,4 +42,13 @@
     <?php endif; ?>
     <?php if (session()->getFlashdata('error')): ?>
         <div class="alert alert-danger"><?= esc(session()->getFlashdata('error')) ?></div>
+    <?php endif; ?>
+    <?php if (session()->getFlashdata('errors')): ?>
+        <div class="alert alert-danger">
+            <ul class="mb-0">
+                <?php foreach (session()->getFlashdata('errors') as $err): ?>
+                    <li><?= esc($err) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
     <?php endif; ?>

@@ -6,6 +6,7 @@ use App\Models\BaremeFraisModel;
 use App\Models\ClientModel;
 use App\Models\OperationModel;
 use App\Models\PrefixeOperateurModel;
+use App\Models\PromotionModel;
 use App\Models\TypeOperationModel;
 use App\Models\OperateurModel;
 use Config\Database;
@@ -23,6 +24,7 @@ class FraisService
     protected BaremeFraisModel $baremeFraisModel;
     protected PrefixeOperateurModel $prefixeOperateurModel;
     protected OperateurModel $operateurModel;
+    protected PromotionModel $promotionModel;
     protected $db;
 
     public function __construct(
@@ -31,8 +33,9 @@ class FraisService
         ?TypeOperationModel $typeOperationModel = null,
         ?BaremeFraisModel $baremeFraisModel = null,
         ?PrefixeOperateurModel $prefixeOperateurModel = null,
-        ?OperateurModel $operateurModel = null
-        
+        ?OperateurModel $operateurModel = null,
+        ?PromotionModel $promotionModel = null
+
     ) {
         $this->clientModel          = $clientModel ?? new ClientModel();
         $this->operationModel       = $operationModel ?? new OperationModel();
@@ -40,6 +43,7 @@ class FraisService
         $this->baremeFraisModel     = $baremeFraisModel ?? new BaremeFraisModel();
         $this->prefixeOperateurModel = $prefixeOperateurModel ?? new PrefixeOperateurModel();
         $this->operateurModel        = $operateurModel ?? new OperateurModel();
+        $this->promotionModel        = $promotionModel ?? new PromotionModel();
         $this->db                   = Database::connect();
     }
 
@@ -164,8 +168,15 @@ class FraisService
             );
         }
 
+        $memeOperateur  = $this->memeOperateur($source['num_tel'], $numTelDestinataire);
         $fraisTransfert = $this->calculerFrais(self::TRANSFERT, $montant);
         $fraisRetrait   = $inclureFraisRetrait ? $this->calculerFrais(self::RETRAIT, $montant) : 0.0;
+
+        if ($memeOperateur) {
+            $fraisTransfert = $this->appliquerPromotion($fraisTransfert);
+            $fraisRetrait   = $this->appliquerPromotion($fraisRetrait);
+        }
+
         $commission = $this->getCommission($source['num_tel'], $numTelDestinataire);
 
         $montantEntrant = $montant + $fraisRetrait;
@@ -237,8 +248,8 @@ class FraisService
             $destinataires[] = $dest;
         }
 
-        $fraisTransfert         = $this->calculerFrais(self::TRANSFERT, $montantParDestinataire);
-        $fraisRetrait           = $inclureFraisRetrait ? $this->calculerFrais(self::RETRAIT, $montantParDestinataire) : 0.0;
+        $fraisTransfert         = $this->appliquerPromotion($this->calculerFrais(self::TRANSFERT, $montantParDestinataire));
+        $fraisRetrait           = $inclureFraisRetrait ? $this->appliquerPromotion($this->calculerFrais(self::RETRAIT, $montantParDestinataire)) : 0.0;
         $montantEntrant         = $montantParDestinataire + $fraisRetrait;
         $montantSortantUnitaire = $montantParDestinataire + $fraisTransfert + $fraisRetrait;
         $montantSortantTotal    = $montantSortantUnitaire * $nombreDestinataires;
@@ -274,6 +285,17 @@ class FraisService
         $this->assertTransactionOk();
 
         return $operations;
+    }
+
+    private function appliquerPromotion(float $frais): float
+    {
+        $pourcentage = $this->promotionModel->getPourcentage();
+
+        if ($pourcentage <= 0) {
+            return $frais;
+        }
+
+        return round($frais - ($frais * $pourcentage / 100), 2);
     }
 
     private function memeOperateur(string $numTel1, string $numTel2): bool

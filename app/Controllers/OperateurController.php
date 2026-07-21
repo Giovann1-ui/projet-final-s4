@@ -6,6 +6,7 @@ use App\Models\ClientModel;
 use App\Models\OperateurModel;
 use App\Models\PrefixeOperateurModel;
 use App\Models\OperationModel;
+use App\Models\PromotionModel;
 
 
 class OperateurController extends BaseController
@@ -118,5 +119,30 @@ class OperateurController extends BaseController
             'soldeTotal' => $soldeTotal,
             'transactions' => $transactions,
         ]));
+    }
+
+    public function promotion()
+    {
+        // if ($redirect = $this->requireRole('operateur')) return $redirect;
+        $promotionModel = new PromotionModel();
+
+        return view('operateur/promotion', $this->viewData([
+            'pourcentage' => $promotionModel->getPourcentage(),
+        ]));
+    }
+
+    public function promotionUpdate()
+    {
+        // if ($redirect = $this->requireRole('operateur')) return $redirect;
+        if (!$this->validate([
+            'pourcentage' => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
+        ])) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $promotionModel = new PromotionModel();
+        $promotionModel->updatePourcentage((float) $this->request->getPost('pourcentage'));
+
+        return redirect()->to('/operateur/promotion')->with('success', 'Pourcentage de promotion mis a jour.');
     }
 }

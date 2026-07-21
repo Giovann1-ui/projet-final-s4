@@ -15,6 +15,8 @@ $routes->group('/operateur', static function ($routes) {
     $routes->get('situation-gains', 'OperateurController::situationGains');
     $routes->get('situation-clients', 'OperateurController::situationClients');
     $routes->get('situation-clients/(:num)', 'OperateurController::situationClientDetail/$1');
+    $routes->get('promotion', 'OperateurController::promotion');
+    $routes->post('promotion', 'OperateurController::promotionUpdate');
 });
 $routes->get('solde', 'Solde::index');
 
