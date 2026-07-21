@@ -66,3 +66,6 @@
     - [x] Envoi multiple vers plusieurs numéros ( divisé le montant pour chaque numéro) même opérateur uniquement
         - [x] vue : une ligne d'input par numero (ajout/suppression en JS)
         - [x] controlleur + FraisService::transfererMultiple (tout ou rien, memeOperateur via operateur_id)
+
+# alea 2
+

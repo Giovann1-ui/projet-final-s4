@@ -1,10 +1,9 @@
 <?= view('operateur/partials/header', ['activePage' => 'promotion']) ?>
 
-<h3 class="mb-4"><i class="bi bi-percent"></i> Promotion sur les frais (même opérateur)</h3>
+<h3 class="mb-4"><i class="bi bi-percent"></i> Promotion sur les frais (meme operateur)</h3>
 
 <p class="text-muted">
-    Ce pourcentage réduit les frais de transfert (et de retrait inclus) uniquement
-    lorsque l'expéditeur et le destinataire appartiennent au même opérateur.
+    Ce pourcentage reduit les frais.
 </p>
 
 <form action="<?= base_url('operateur/promotion') ?>" method="post" class="row g-2 mb-4">
