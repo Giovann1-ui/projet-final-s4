@@ -29,4 +29,11 @@ class PrefixeOperateurModel extends Model
     {
         return $this->where('code', $prefixe)->first() !== null;
     }
+
+    public function getOperateurIdByPrefixe(string $prefixe): ?int
+    {
+        $row = $this->where('code', $prefixe)->first();
+
+        return $row !== null ? (int) $row['operateur_id'] : null;
+    }
 }

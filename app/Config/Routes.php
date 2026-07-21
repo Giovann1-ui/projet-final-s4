@@ -31,6 +31,8 @@ $routes->group('client', static function ($routes) {
         $routes->post('retrait', 'Client::retraitStore');
         $routes->get('transfert', 'Client::transfert');
         $routes->post('transfert', 'Client::transfertStore');
+        $routes->get('envoi-multiple', 'Client::envoiMultiple');
+        $routes->post('envoi-multiple', 'Client::envoiMultipleStore');
         $routes->get('historique', 'Client::historique');
     });
 });
