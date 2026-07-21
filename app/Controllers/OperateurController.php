@@ -166,7 +166,7 @@ class OperateurController extends BaseController
 
                 foreach ($operations as $operation) {
                     // Commission = Montant brut * (% commission / 100)
-                    $totalGains += (float) ($operation['montant_brut'] * ($commissionTaux / 100));
+                    $totalGains += (float) ($operation['montant_brut'] * ($operation['commission'] / 100));
                 }
 
                 $listeGainsAutres[$opId] = $totalGains;
