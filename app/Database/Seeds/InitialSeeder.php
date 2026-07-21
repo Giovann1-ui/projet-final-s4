@@ -39,7 +39,7 @@ class InitialSeeder extends Seeder
                 ['id' => 1, 'num_tel' => '0341234567', 'date_inscription' => date('Y-m-d H:i:s')],
                 ['id' => 2, 'num_tel' => '0349876543', 'date_inscription' => date('Y-m-d H:i:s')],
                 ['id' => 3, 'num_tel' => '0337654321', 'date_inscription' => date('Y-m-d H:i:s')],
-                ['id' => 4, 'num_tel' => '0371234567', 'date_inscription' => date('Y-m-d H:i:s')],
+                ['id' => 4, 'num_tel' => '0331234567', 'date_inscription' => date('Y-m-d H:i:s')],
             ]);
         }
 
