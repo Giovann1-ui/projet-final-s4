@@ -6,7 +6,40 @@ use CodeIgniter\Router\RouteCollection;
  * @var RouteCollection $routes
  */
 
+$routes->get('/', 'ClientAuth::index');
 
+$routes->group('/operateur', static function ($routes) {
+    $routes->get('/', 'OperateurController::index');
+    $routes->get('creer', 'OperateurController::creerOperateur');
+    $routes->post('creer', 'OperateurController::storeOperateur');
+    $routes->get('situation-gains', 'OperateurController::situationGains');
+    $routes->get('situation-clients', 'OperateurController::situationClients');
+    $routes->get('situation-clients/(:num)', 'OperateurController::situationClientDetail/$1');
+    $routes->get('promotion', 'OperateurController::promotion');
+    $routes->post('promotion', 'OperateurController::promotionUpdate');
+});
+$routes->get('solde', 'Solde::index');
+
+$routes->group('client', static function ($routes) {
+    $routes->get('login', 'ClientAuth::index');
+    $routes->post('login', 'ClientAuth::login');
+    $routes->get('logout', 'ClientAuth::logout');
+
+    $routes->group('', ['filter' => 'clientauth'], static function ($routes) {
+        $routes->get('/', 'Client::index');
+        $routes->get('depot', 'Client::depot');
+        $routes->post('depot', 'Client::depotStore');
+        $routes->get('retrait', 'Client::retrait');
+        $routes->post('retrait', 'Client::retraitStore');
+        $routes->get('transfert', 'Client::transfert');
+        $routes->post('transfert', 'Client::transfertStore');
+        $routes->get('envoi-multiple', 'Client::envoiMultiple');
+        $routes->post('envoi-multiple', 'Client::envoiMultipleStore');
+        $routes->get('historique', 'Client::historique');
+        $routes->get('epargne', 'Client::epargne');
+        $routes->post('epargne', 'Client::epargneUpdate');
+    });
+});
 
 // $routes->get('/', 'Auth::index');
 // $routes->get('/login', 'Auth::index');
