@@ -36,7 +36,7 @@
                 type="text"
                 name="num_tel"
                 class="form-control form-control-lg"
-                placeholder="Numéro de téléphone (ex: 0331234567)"
+                placeholder="Numéro de téléphone"
                 value="<?= esc(old('num_tel')) ?>"
                 required
             >
