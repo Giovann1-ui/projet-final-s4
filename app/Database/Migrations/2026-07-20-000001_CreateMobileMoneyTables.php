@@ -28,6 +28,14 @@ class CreateMobileMoneyTables extends Migration
         $this->forge->addForeignKey('operateur_id', 'operateur', 'id', 'CASCADE', 'CASCADE');
         $this->forge->createTable('prefixe_operateur');
 
+        $this->forge->addField([
+            'id' => ['type' => 'INTEGER', 'constraint' => 11, 'auto_increment' => true],
+            'promotion_pct' => ['type' => 'DECIMAL', 'constraint' => '5,2', 'default' => 0.00],
+        ]);
+        $this->forge->addKey('id', true);
+        $this->forge->createTable('promotion');
+
+
         // 2. Table client
         $this->forge->addField([
             'id'               => ['type' => 'INTEGER', 'constraint' => 11, 'auto_increment' => true],

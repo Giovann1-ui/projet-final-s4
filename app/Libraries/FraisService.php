@@ -8,6 +8,7 @@ use App\Models\OperationModel;
 use App\Models\PrefixeOperateurModel;
 use App\Models\TypeOperationModel;
 use App\Models\OperateurModel;
+use App\Models\PromotionModel;
 use Config\Database;
 use RuntimeException;
 
@@ -165,7 +166,15 @@ class FraisService
         }
 
         $fraisTransfert = $this->calculerFrais(self::TRANSFERT, $montant);
+        //! ICI
+        $promotionModel = new PromotionModel();
+        $promotionTransfert = $promotionModel->getPromotion()['promotion_pct'];
+        //!
         $fraisRetrait   = $inclureFraisRetrait ? $this->calculerFrais(self::RETRAIT, $montant) : 0.0;
+        //!
+        $tempPctApplique = 100 - $promotionTransfert;
+        $fraisRetrait = ($tempPctApplique * $fraisRetrait) / 100;
+        //!
         $commission = $this->getCommission($source['num_tel'], $numTelDestinataire);
 
         $montantEntrant = $montant + $fraisRetrait;

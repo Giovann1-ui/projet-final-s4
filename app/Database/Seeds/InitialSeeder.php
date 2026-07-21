@@ -8,6 +8,11 @@ class InitialSeeder extends Seeder
 {
     public function run()
     {
+        if ($this->db->table('promotion')->countAllResults() === 0) {
+            $this->db->table('promotion')->insertBatch([
+                ['id' => 1, 'promotion_pct' => 20.00],
+            ]);
+        }
         // 1. Insertion des opérateurs et de leurs préfixes
         if ($this->db->table('operateur')->countAllResults() === 0) {
             $this->db->table('operateur')->insertBatch([

@@ -72,3 +72,9 @@
     - [x] Envoi multiple vers plusieurs numéros ( divisé le montant pour chaque numéro) même opérateur uniquement
         - [x] vue : une ligne d'input par numero (ajout/suppression en JS)
         - [x] controlleur + FraisService::transfererMultiple (tout ou rien, memeOperateur via operateur_id)
+
+- [ ] promotion pourcentage de frais de retrait sur meme operateur
+    - [x] creer table promotion
+        - [x] id, promotion
+    - [x] creer modele promotion
+    - [ ] modifier la fonction dans le modele : transfere store
