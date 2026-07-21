@@ -165,6 +165,7 @@ class FraisService
         if ($inclureFraisRetrait && !$this->memeOperateur($source['num_tel'], $numTelDestinataire)) {
             throw new RuntimeException(
                 "L'inclusion des frais de retrait n'est disponible qu'entre numeros du meme operateur."
+
             );
         }
 
@@ -179,7 +180,7 @@ class FraisService
 
         $commission = $this->getCommission($source['num_tel'], $numTelDestinataire);
 
-        $montantEntrant = $montant + $fraisRetrait;
+        $montantEntrant = $montant + $fraisRetrait ;
         $montantSortant = $montant + $fraisTransfert + $fraisRetrait + ($montant * ($commission / 100));
 
         $this->db->transStart();

@@ -4,12 +4,19 @@ namespace App\Controllers;
 
 use App\Libraries\FraisService;
 use App\Models\OperationModel;
+use App\Models\EpargneModel;
 use App\Models\TypeOperationModel;
 use CodeIgniter\Controller;
 use RuntimeException;
 
 class Client extends Controller
 {
+    
+    protected function viewData(array $data = []): array
+    {
+        return array_merge($data);
+    }
+
     public function index()
     {
         $clientId = session('client')['id'];
@@ -130,6 +137,30 @@ class Client extends Controller
             'success',
             'Envoi multiple de ' . number_format($montant, 0, ',', ' ') . ' Ar effectue.'
         );
+    }
+
+    public function epargne()
+    {
+        $epargneModel = new EpargneModel();
+
+        return view('client/epargne', $this->viewData([
+            'pourcentage' => $epargneModel->getPourcentage(),
+        ]));
+    }
+
+    public function epargneUpdate()
+    {
+        // if ($redirect = $this->requireRole('operateur')) return $redirect;
+        if (!$this->validate([
+            'pourcentage' => 'required|decimal|greater_than_equal_to[0]|less_than_equal_to[100]',
+        ])) {
+            return redirect()->back()->withInput()->with('errors', $this->validator->getErrors());
+        }
+
+        $epargneModel = new epargneModel();
+        $epargneModel->updatePourcentage((float) $this->request->getPost('pourcentage'));
+
+        return redirect()->to('/client/epargne')->with('success', 'Pourcentage d epargne mis a jour.');
     }
 
     public function historique()

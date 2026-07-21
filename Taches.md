@@ -69,3 +69,8 @@
 
 # alea 2
 
+ - []epargne
+    - []pour chaque clinet mifidy % epargnena
+    - [x] table epargne avec %
+    - transfer tonga % makany amin'ny epargne
+- [x] page de pourcentage  

@@ -32,6 +32,7 @@
             <a class="nav-link <?= $active === 'retrait' ? 'fw-bold text-white' : 'text-white-50' ?>" href="<?= base_url('client/retrait') ?>">Retrait</a>
             <a class="nav-link <?= $active === 'transfert' ? 'fw-bold text-white' : 'text-white-50' ?>" href="<?= base_url('client/transfert') ?>">Transfert</a>
             <a class="nav-link <?= $active === 'historique' ? 'fw-bold text-white' : 'text-white-50' ?>" href="<?= base_url('client/historique') ?>">Historique</a>
+            <a class="nav-link <?= $active === 'epargne' ? 'fw-bold text-white' : 'text-white-50' ?>" href="<?= base_url('client/epargne') ?>">Epargne</a>
             <a class="nav-link text-white-50" href="<?= base_url('client/logout') ?>">Déconnexion</a>
         </div>
     </div>
