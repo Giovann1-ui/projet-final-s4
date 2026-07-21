@@ -1,6 +1,7 @@
 writable/logs
 writable/cache
-writable/sessions
+writable/session
 writable/uploads
 writable/debugbar
-writable/session
+writable/database.sqlite-shm
+writable/database.sqlite-wal

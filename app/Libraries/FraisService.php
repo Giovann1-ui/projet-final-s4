@@ -7,6 +7,7 @@ use App\Models\ClientModel;
 use App\Models\OperationModel;
 use App\Models\PrefixeOperateurModel;
 use App\Models\TypeOperationModel;
+use App\Models\OperateurModel;
 use Config\Database;
 use RuntimeException;
 
@@ -21,6 +22,7 @@ class FraisService
     protected TypeOperationModel $typeOperationModel;
     protected BaremeFraisModel $baremeFraisModel;
     protected PrefixeOperateurModel $prefixeOperateurModel;
+    protected OperateurModel $operateurModel;
     protected $db;
 
     public function __construct(
@@ -28,13 +30,16 @@ class FraisService
         ?OperationModel $operationModel = null,
         ?TypeOperationModel $typeOperationModel = null,
         ?BaremeFraisModel $baremeFraisModel = null,
-        ?PrefixeOperateurModel $prefixeOperateurModel = null
+        ?PrefixeOperateurModel $prefixeOperateurModel = null,
+        ?OperateurModel $operateurModel = null
+        
     ) {
         $this->clientModel          = $clientModel ?? new ClientModel();
         $this->operationModel       = $operationModel ?? new OperationModel();
         $this->typeOperationModel   = $typeOperationModel ?? new TypeOperationModel();
         $this->baremeFraisModel     = $baremeFraisModel ?? new BaremeFraisModel();
         $this->prefixeOperateurModel = $prefixeOperateurModel ?? new PrefixeOperateurModel();
+        $this->operateurModel        = $operateurModel ?? new OperateurModel();
         $this->db                   = Database::connect();
     }
 
@@ -55,6 +60,25 @@ class FraisService
         }
 
         return (float) $tranche['frais'];
+    }
+
+     public function getCommission(string $numTel,string $numTelDestinataire): float
+
+    {
+        
+        $operateurIdSource = $this->prefixeOperateurModel->getOperateurIdByPrefixe(substr($numTel, 0, 3));
+        $operateurIdDest   = $this->prefixeOperateurModel->getOperateurIdByPrefixe(substr($numTelDestinataire, 0, 3));
+
+        if ($operateurIdSource === null || $operateurIdDest === null) {
+            throw new RuntimeException('Impossible de determiner l operateur pour le numero source ou destinataire.');
+        }
+
+        if ($operateurIdSource === $operateurIdDest) {
+            return 0.0; // Pas de commission si meme operateur
+        }
+        $commission = $this->operateurModel->getCommissionById($operateurIdDest);
+        return $commission !== null ? (float) $commission : 0.0;
+        
     }
 
     public function verifierSoldeSuffisant(int $clientId, float $montantRequis): bool
@@ -142,8 +166,10 @@ class FraisService
 
         $fraisTransfert = $this->calculerFrais(self::TRANSFERT, $montant);
         $fraisRetrait   = $inclureFraisRetrait ? $this->calculerFrais(self::RETRAIT, $montant) : 0.0;
+        $commission = $this->getCommission($source['num_tel'], $numTelDestinataire);
+
         $montantEntrant = $montant + $fraisRetrait;
-        $montantSortant = $montant + $fraisTransfert + $fraisRetrait;
+        $montantSortant = $montant + $fraisTransfert + $fraisRetrait + ($montant * ($commission / 100));
 
         $this->db->transStart();
 
@@ -162,6 +188,7 @@ class FraisService
             'montant_brut'    => $montant,
             'frais'           => $fraisTransfert,
             'frais_retrait'   => $fraisRetrait,
+            'commission'      => $commission,
             'montant_entrant' => $montantEntrant,
             'montant_sortant' => $montantSortant,
             'date'            => date('Y-m-d H:i:s'),
@@ -249,12 +276,6 @@ class FraisService
         return $operations;
     }
 
-    /**
-     * Deux numeros appartiennent au meme operateur si leurs prefixes (les 3 premiers
-     * chiffres) sont rattaches au meme operateur_id dans `prefixe_operateur` — un meme
-     * operateur peut avoir plusieurs prefixes, donc on ne compare jamais les prefixes
-     * directement entre eux.
-     */
     private function memeOperateur(string $numTel1, string $numTel2): bool
     {
         $operateurId1 = $this->prefixeOperateurModel->getOperateurIdByPrefixe(substr($numTel1, 0, 3));

@@ -1,4 +1,4 @@
-<!-- ! sans caractere specila comm un accent -->
+
 # V1
 - [x] base
     - [x] conception base de donnees (Giovanni et Harena)

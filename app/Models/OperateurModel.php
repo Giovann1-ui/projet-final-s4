@@ -14,4 +14,8 @@ class OperateurModel extends Model
     {
         return $this->findAll();
     }
+    public function getCommissionById($id = null)
+    {
+        return $this->find($id)['commission'] ?? null;
+    }
 }
