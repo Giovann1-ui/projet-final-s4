@@ -5,13 +5,28 @@
 <div class="row g-3 mb-4">
     <div class="col-12 col-md-6">
         <div class="total-box text-center">
-            <div>Gains sur retraits</div>
+            <div>Total Gains sur retraits</div>
+            <div class="montant"><?= number_format((float) ($totalGainsRetraitToutOperateurs ?? 0), 0, ',', ' ') ?> Ar</div>
+        </div>
+    </div>
+    <div class="col-12 col-md-6">
+        <div class="total-box text-center">
+            <div>Total Gains sur transferts</div>
+            <div class="montant"><?= number_format((float) ($totalGainsTransfertToutOperateurs ?? 0), 0, ',', ' ') ?> Ar</div>
+        </div>
+    </div>
+</div>
+
+<div class="row g-3 mb-4">
+    <div class="col-12 col-md-6">
+        <div class="total-box text-center">
+            <div>Nos Gains sur retraits</div>
             <div class="montant"><?= number_format((float) ($totalGainsRetrait ?? 0), 0, ',', ' ') ?> Ar</div>
         </div>
     </div>
     <div class="col-12 col-md-6">
         <div class="total-box text-center">
-            <div>Gains sur transferts</div>
+            <div>Nos Gains sur transferts</div>
             <div class="montant"><?= number_format((float) ($totalGainsTransfert ?? 0), 0, ',', ' ') ?> Ar</div>
         </div>
     </div>

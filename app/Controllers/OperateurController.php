@@ -55,6 +55,9 @@ class OperateurController extends BaseController
         $prefixeOperateur = $prefixeModel->getallPrefixeOperateursByUs();
         $prefixeCodes = array_column($prefixeOperateur, 'code');
 
+        $prefixeToutOperateurs = $prefixeModel->getAllPrefixeOperateurs();
+        $prefixeToutCodes = array_column($prefixeToutOperateurs, 'code');
+
         // 3. Récupérer les préfixes uniquement des AUTRES opérateurs pour la table du milieu
         $autresPrefixeCodes = [];
         if (!empty($autresOperateurs)) {
@@ -66,6 +69,9 @@ class OperateurController extends BaseController
         // Calcul des totaux et listes (Notre réseau "isUs")
         $totalGainsRetrait   = $operationModel->getGainsByTypeOperationAndPrefixeSQL(2, $prefixeCodes);
         $totalGainsTransfert = $operationModel->getGainsByTypeOperationAndPrefixeSQL(3, $prefixeCodes);
+
+        $totalGainsRetraitToutOperateurs   = $operationModel->getGainsByTypeOperationAndPrefixeSQL(2, $prefixeToutCodes);
+        $totalGainsTransfertToutOperateurs = $operationModel->getGainsByTypeOperationAndPrefixeSQL(3, $prefixeToutCodes);
         
         $listeOperationsRetrait   = $operationModel->getOperationByTypeOperationAndPrefixeSQL(2, $prefixeCodes);
         $listeOperationsTransfert = $operationModel->getOperationByTypeOperationAndPrefixeSQL(3, $prefixeCodes);
@@ -77,6 +83,8 @@ class OperateurController extends BaseController
         }
 
         return view('operateur/situationGain', $this->viewData([
+            'totalGainsRetraitToutOperateurs'   => $totalGainsRetraitToutOperateurs,
+            'totalGainsTransfertToutOperateurs' => $totalGainsTransfertToutOperateurs,
             'totalGainsRetrait'        => $totalGainsRetrait,
             'totalGainsTransfert'      => $totalGainsTransfert,
             'listeOperationsRetrait'   => $listeOperationsRetrait,
